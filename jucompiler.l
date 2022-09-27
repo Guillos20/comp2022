@@ -1,0 +1,59 @@
+%{
+     #include <ctype.h>
+    #include <stdbool.h>
+%}
+
+letter          [A-Za-z]
+digit           [0-9]+
+octal           0[0-7]+
+hexadecimal     0[xX][0-9A-Fa-f]+
+id_letter       letter|"_"|"$"
+
+id              ({id_letter})({id_letter}|{digit})*
+intlit          {digit}|[1-9]({digit}|"_")*{digit}
+reallit         {intlit}
+
+reserved        "abstract"|"continue"|"for"|"new"|"switch"|"assert"|"default"|"package"|"synchronized"|"do"|"goto"|"private"|"this"|"break"|"implements"|"protected"|"throw"|"byte"|"else"|"import"|"throws"|"case"|"enum"|"instanceof"|"transient"|"catch"|"extends"|"short"|"try"|"char"|"final"|"interface""class"|"finally"|"long"|"strictfp"|"volatile"|"const"|"float"|"native"|"super"|"--"|"++"|"Integer"|"System"|"null"|"_"
+boollit         "true"|"false"
+and             "&&"
+assign          "="
+star            "*"
+comma           ","
+div             "/"
+eq              "=="
+ge              ">="
+gt              ">"
+lbrace          "{"
+le              "<="
+lpar            "("
+lsq             "["
+lt              "<"
+minus           "-"
+mod             "%"
+ne              "!="
+not             "!"
+or              "||"
+plus            "+"
+rbrace          "}"
+rpar            ")"
+rsq             "]"
+semicolon       ";"
+arrow           "->"
+lshift          "<<"
+rshift          ">>"
+xor             "^"
+bool            "boolean"
+class           "class"
+dotlength       ".length"
+double          "double"
+else            "else"
+if              "if"
+int             "int"
+print           "System.out.print"
+parseint        "Integer.parseInt"
+public          "public"
+return          "return"
+static          "static"
+string          "String"
+void            "void"
+while           "while"
