@@ -1,17 +1,31 @@
 %{
-     #include <ctype.h>
+    #include <ctype.h>
     #include <stdbool.h>
+    #include <string.h>
+
+    int svLine = 1;
+    int linha =1;
+    int coluna =1;
+    int svPoint = 1;
+    int fc = 0;
 %}
+
+%x STR COM1 COM2
+
 
 letter          [A-Za-z]
 digit           [0-9]+
+intdigits       [1-9]({digit}|"_")*{digit}
+realdigits      {digit}({digit}|"_")*{digit}
 octal           0[0-7]+
 hexadecimal     0[xX][0-9A-Fa-f]+
-id_letter       letter|"_"|"$"
+id_letter       {letter}|"_"|"$"
+exp             ("E"|"e")("+"|"-")?{realdigits}
 
-id              ({id_letter})({id_letter}|{digit})*
-intlit          {digit}|[1-9]({digit}|"_")*{digit}
-reallit         {intlit}
+id              {id_letter}({id_letter}|{digit})*
+intlit          {digit}|{intdigits}
+reallit         {realdigits}"."{realdigits}?{exp}?|{realdigits}{exp}
+strlit          ([^\n\r\\" ]|\\n|\\f|\\r|\\\\|\\\"|\\t)*
 
 reserved        "abstract"|"continue"|"for"|"new"|"switch"|"assert"|"default"|"package"|"synchronized"|"do"|"goto"|"private"|"this"|"break"|"implements"|"protected"|"throw"|"byte"|"else"|"import"|"throws"|"case"|"enum"|"instanceof"|"transient"|"catch"|"extends"|"short"|"try"|"char"|"final"|"interface""class"|"finally"|"long"|"strictfp"|"volatile"|"const"|"float"|"native"|"super"|"--"|"++"|"Integer"|"System"|"null"|"_"
 boollit         "true"|"false"
@@ -57,3 +71,102 @@ static          "static"
 string          "String"
 void            "void"
 while           "while"
+illseq          \\[^fnrt\\\"] 
+  // might have to change the last one 
+
+%%
+
+
+"/*"               {BEGIN COM1; svPoint = coluna; svLine = linha; coluna += yyleng;} 
+<COM1>"*/"         {coluna += yyleng;BEGIN 0;}
+<COM1>.            {coluna += yyleng;}
+<COM1>\n|\r\n      {linha+=1;coluna = 1;}
+<COM1><<EOF>>      {printf("Line %d, column %d: unterminated comment\n",svLine,svPoint);BEGIN 0;}
+
+"//"               {BEGIN COM2; coluna += yyleng ;} 
+<COM2>.*           {;}
+<COM2>\n|\r\n      {BEGIN 0;linha +=1;coluna =1;}
+
+
+\"                 {BEGIN STR;svPoint = coluna; coluna += yyleng;}
+<STR>\"            {BEGIN 0;}
+<STR>{strlit}\"    {if(fc == 1){printf("STRLIT(%s)\n",&yytext[-1]);}BEGIN 0;}  
+<STR>{illseq}      {printf("Line %d, column %d: invalid escape sequence (%s)\n",linha,coluna,yytext); coluna+= yyleng;}                  
+<STR><<EOF>>       {printf("Line %d, column %d: unterminated string literal\n",linha,svPoint); BEGIN 0;}
+<STR>\r\n|\n       {printf("Line %d, column %d: unterminated string literal\n",linha,svPoint); linha +=1; coluna = 1 ; BEGIN 0;}
+
+{else}            {coluna += yyleng;if(fc == 1){printf("ELSE\n");}}//maybe temos de ir atualizando o svPoint e o svLine
+{intlit}          {coluna += yyleng;if(fc == 1){printf("INTLIT(%s)\n",yytext);}}
+{reallit}         {coluna += yyleng;if(fc == 1){printf("REALLIT(%s)\n",yytext);}}
+
+{reserved}        {coluna += yyleng;if(fc == 1){printf("RESERVED(%s)\n",yytext);}}
+{and}             {coluna += yyleng;if(fc == 1){printf("AND\n");}}
+{assign}          {coluna += yyleng;if(fc == 1){printf("ASSIGN\n");}}
+{star}            {coluna += yyleng;if(fc == 1){printf("STAR\n");}}
+{comma}           {coluna += yyleng;if(fc == 1){printf("COMMA\n");}}
+{div}             {coluna += yyleng;if(fc == 1){printf("DIV\n");}}
+{eq}              {coluna += yyleng;if(fc == 1){printf("EQ\n");}}
+{ge}              {coluna += yyleng;if(fc == 1){printf("GE\n");}}
+{gt}              {coluna += yyleng;if(fc == 1){printf("GT\n");}}
+{lbrace}          {coluna += yyleng;if(fc == 1){printf("LBRACE\n");}}
+{le}              {coluna += yyleng;if(fc == 1){printf("LE\n");}}
+{lpar}            {coluna += yyleng;if(fc == 1){printf("LPAR\n");}}
+{lsq}             {coluna += yyleng;if(fc == 1){printf("LSQ\n");}}
+{lt}              {coluna += yyleng;if(fc == 1){printf("LT\n");}}
+{minus}           {coluna += yyleng;if(fc == 1){printf("MINUS\n");}}
+{mod}             {coluna += yyleng;if(fc == 1){printf("MOD\n");}}
+{ne}              {coluna += yyleng;if(fc == 1){printf("NE\n");}}
+{not}             {coluna += yyleng;if(fc == 1){printf("NOT\n");}}
+{boollit}         {coluna += yyleng;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);}}
+{or}              {coluna += yyleng;if(fc == 1){printf("OR\n");}}
+{plus}            {coluna += yyleng;if(fc == 1){printf("PLUS\n");}}
+{rbrace}          {coluna += yyleng;if(fc == 1){printf("RBRACE\n");}}
+{rpar}            {coluna += yyleng;if(fc == 1){printf("RPAR\n");}}
+{rsq}             {coluna += yyleng;if(fc == 1){printf("RSQ\n");}}
+{semicolon}       {coluna += yyleng;if(fc == 1){printf("SEMICOLON\n");}}
+{arrow}           {coluna += yyleng;if(fc == 1){printf("ARROW\n");}}
+{lshift}          {coluna += yyleng;if(fc == 1){printf("LSHIFT\n");}}
+{rshift}          {coluna += yyleng;if(fc == 1){printf("RSHIFT\n");}}
+{xor}             {coluna += yyleng;if(fc == 1){printf("XOR\n");}}
+{bool}            {coluna += yyleng;if(fc == 1){printf("BOOL\n");}}
+{class}           {coluna += yyleng;if(fc == 1){printf("CLASS\n");}}
+{dotlength}       {coluna += yyleng;if(fc == 1){printf("DOTLENGTH\n");}}
+{double}          {coluna += yyleng;if(fc == 1){printf("DOUBLE\n");}}
+{if}              {coluna += yyleng;if(fc == 1){printf("IF\n");}}
+{int}             {coluna += yyleng;if(fc == 1){printf("INT\n");}}
+{print}           {coluna += yyleng;if(fc == 1){printf("PRINT\n");}}
+{parseint}        {coluna += yyleng;if(fc == 1){printf("PARSEINT\n");}}
+{public}          {coluna += yyleng;if(fc == 1){printf("PUBLIC\n");}}
+{return}          {coluna += yyleng;if(fc == 1){printf("RETURN\n");}}
+{static}          {coluna += yyleng;if(fc == 1){printf("STATIC\n");}}
+{string}          {coluna += yyleng;if(fc == 1){printf("STRING\n");}}
+{void}            {coluna += yyleng;if(fc == 1){printf("VOID\n");}}
+{while}           {coluna += yyleng;if(fc == 1){printf("WHILE\n");}}
+{id}              {coluna += yyleng;if(fc == 1){printf("ID(%s)\n",yytext);}}
+" "               {coluna += yyleng;}
+\t                {coluna += yyleng;}
+\n|\r\n           {coluna = 1;}
+.                 {printf("Line %d, column %d: illegal character (%s)\n",linha,coluna,yytext); coluna += yyleng;}
+
+
+
+
+%%
+
+int main(int argc, char** argv){
+    for(int i = 1;i<argc;i++){
+        if(strcmp(argv[i], "-l") == 0){
+            fc = 1;
+        }
+       /* if(strcmp(argv[i], "-e1") == 0){
+            fc = 2;
+        }*/
+    
+    yylex();
+    return 0;
+    }
+}
+
+int yywrap(){
+    return 1;
+}
