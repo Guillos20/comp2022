@@ -1,0 +1,6 @@
+STRLIT("")
+STRLIT("\\")
+STRLIT("\"")
+STRLIT("This is a string")
+STRLIT("This is a ")
+PLUS
