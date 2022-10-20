@@ -2,7 +2,6 @@
     #include <stdbool.h>
     #include <stdio.h>
     #include <stdlib.h>
-    #include "arvore.h" 
 
     int yylex(void);
     void yyerror (const char *s);
@@ -15,15 +14,13 @@
 }
 
 %token ELSE DOTLENGTH DOUBLE AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ SEMICOLON ARROW LSHIFT RSHIFT XOR BOOL CLASS IF INT  PRINT PARSEINT PUBLIC RETURN STATIC STRING VOID WHILE 
-%token <stringValue> STRLIT INTLIT RESERVED BOOLLIT ID REALLIT
-
+%token <stringValue> STRLIT INTLIT RESERVED BOOLLIT ID REALLIT EXPR
 %%
 
 Program: CLASS ID LBRACE DeclMult RBRACE          {;}
        | CLASS ID LBRACE RBRACE                   {;} 
 
-DeclMult: DeclMult                                {;}
-        | MethodDecl                              {;}
+DeclMult: MethodDecl                              {;}
         | FieldDecl                               {;}
         | SEMICOLON                               {;} 
 
@@ -32,8 +29,8 @@ MethodDecl: PUBLIC STATIC MethodHeader MethodBody {;}
 FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {;}
          | PUBLIC STATIC Type ID SEMICOLON        {;} 
 
-COMID: COMID                                      {;}
-     | COMMA ID                                   {;}
+COMID: COMID COMMA ID
+    |                                           {;}
 
 Type: BOOL                                        {;}
     | INT                                         {;}
@@ -48,14 +45,17 @@ FormalParams: Type ID                             {;}
             | Type ID COMTYPID                    {;}
             | STRING LSQ RSQ ID                   {;}
 
-COMTYPID: COMTYPID                                {;}
-        | COMMA Type ID                           {;}
+COMTYPID: COMMA Type ID                           {;}
 
 MethodBody: LBRACE BODY RBRACE                    {;}
         |   LBRACE RBRACE                         {;}
 
-BODY: BODY                                        {;}
-    | Statement                                   {;}
+BODY: Statement                                   {;}
     | VarDecl                                     {;}
+
+VarDecl:Type ID COMID SEMICOLON                {;}
+    | Type SEMICOLON
+Statement: LBRACE Statement RBRACE                {;}
+    | LBRACE RBRACE                               {;}
 
 %%

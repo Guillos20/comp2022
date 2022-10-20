@@ -5,6 +5,8 @@
     #include <ctype.h>
     #include <stdbool.h>
     #include <string.h>
+    #include "y.tab.h"
+
 
     int svLine = 1;
     int linha =1;
@@ -12,6 +14,8 @@
     int svPoint = 1;
     int fc = 0;
     bool ignoreSTR = false;
+    int line_yacc = 0;
+    int col_yacc = 0;
 %}
 
 %x STR COM1 COM2
@@ -162,16 +166,23 @@ int main(int argc, char** argv){
     for(int i = 1;i<argc;i++){
         if(strcmp(argv[i], "-l") == 0){
             fc = 1;
+            yylex();
         }
         if(strcmp(argv[i], "-e1") == 0){
             fc = 2;
+            yylex();
         }
-        
+        if(strcmp(argv[i], "-t") == 0){
+            fc = 3;
+            yyparse();
+        }
     }
-    yylex();
-    yyparse();
+    
     return 0;
     }
+    void yyerror(char* s){
+    printf("Line %d, column %d: %s: %s\n", line_yacc, col_yacc, s, yytext);
+}
 
 
 int yywrap(){
