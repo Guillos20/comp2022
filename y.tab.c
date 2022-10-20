@@ -171,8 +171,7 @@ extern int yydebug;
     RESERVED = 302,
     BOOLLIT = 303,
     ID = 304,
-    REALLIT = 305,
-    EXPR = 306
+    REALLIT = 305
   };
 #endif
 /* Tokens.  */
@@ -224,7 +223,6 @@ extern int yydebug;
 #define BOOLLIT 303
 #define ID 304
 #define REALLIT 305
-#define EXPR 306
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -233,9 +231,10 @@ union YYSTYPE
 #line 11 "jucompiler.y"
 
     char *stringValue;
-    //struct node *node;
+    char* value;
+    struct node *node;
 
-#line 239 "y.tab.c"
+#line 238 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -557,7 +556,7 @@ union yyalloc
 #define YYLAST   62
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  52
+#define YYNTOKENS  51
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  14
 /* YYNRULES -- Number of rules.  */
@@ -566,7 +565,7 @@ union yyalloc
 #define YYNSTATES  61
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   306
+#define YYMAXUTOK   305
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -608,17 +607,17 @@ static const yytype_int8 yytranslate[] =
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
-      45,    46,    47,    48,    49,    50,    51
+      45,    46,    47,    48,    49,    50
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    20,    20,    21,    23,    24,    25,    27,    29,    30,
-      32,    33,    35,    36,    37,    39,    40,    41,    42,    44,
-      45,    46,    48,    50,    51,    53,    54,    56,    57,    58,
-      59
+       0,    22,    22,    23,    25,    26,    27,    29,    31,    32,
+      34,    36,    38,    39,    40,    42,    43,    44,    45,    47,
+      48,    49,    51,    53,    54,    56,    57,    59,    60,    62,
+      63
 };
 #endif
 
@@ -633,7 +632,7 @@ static const char *const yytname[] =
   "RPAR", "RSQ", "SEMICOLON", "ARROW", "LSHIFT", "RSHIFT", "XOR", "BOOL",
   "CLASS", "IF", "INT", "PRINT", "PARSEINT", "PUBLIC", "RETURN", "STATIC",
   "STRING", "VOID", "WHILE", "STRLIT", "INTLIT", "RESERVED", "BOOLLIT",
-  "ID", "REALLIT", "EXPR", "$accept", "Program", "DeclMult", "MethodDecl",
+  "ID", "REALLIT", "$accept", "Program", "DeclMult", "MethodDecl",
   "FieldDecl", "COMID", "Type", "MethodHeader", "FormalParams", "COMTYPID",
   "MethodBody", "BODY", "VarDecl", "Statement", YY_NULLPTR
 };
@@ -649,7 +648,7 @@ static const yytype_int16 yytoknum[] =
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
      295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
-     305,   306
+     305
 };
 # endif
 
@@ -733,22 +732,22 @@ static const yytype_int8 yycheck[] =
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    34,    53,    49,     0,    14,    25,    28,    39,    54,
-      55,    56,    41,    25,     5,    33,    36,    43,    58,    59,
-      49,    49,    14,    62,    16,    16,    28,    57,    14,    25,
-      58,    63,    64,    65,    26,    42,    58,    60,    26,    60,
-       9,    28,    25,    65,    28,    49,    25,    17,    49,    26,
-      26,    49,    25,    57,    27,     9,    61,    28,    49,    58,
+       0,    34,    52,    49,     0,    14,    25,    28,    39,    53,
+      54,    55,    41,    25,     5,    33,    36,    43,    57,    58,
+      49,    49,    14,    61,    16,    16,    28,    56,    14,    25,
+      57,    62,    63,    64,    26,    42,    57,    59,    26,    59,
+       9,    28,    25,    64,    28,    49,    25,    17,    49,    26,
+      26,    49,    25,    56,    27,     9,    60,    28,    49,    57,
       49
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    52,    53,    53,    54,    54,    54,    55,    56,    56,
-      57,    57,    58,    58,    58,    59,    59,    59,    59,    60,
-      60,    60,    61,    62,    62,    63,    63,    64,    64,    65,
-      65
+       0,    51,    52,    52,    53,    53,    53,    54,    55,    55,
+      56,    56,    57,    57,    57,    58,    58,    58,    58,    59,
+      59,    59,    60,    61,    61,    62,    62,    63,    63,    64,
+      64
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -1453,169 +1452,169 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 20 "jucompiler.y"
+#line 22 "jucompiler.y"
                                                   {;}
-#line 1459 "y.tab.c"
+#line 1458 "y.tab.c"
     break;
 
   case 3:
-#line 21 "jucompiler.y"
+#line 23 "jucompiler.y"
                                                   {;}
-#line 1465 "y.tab.c"
+#line 1464 "y.tab.c"
     break;
 
   case 4:
-#line 23 "jucompiler.y"
+#line 25 "jucompiler.y"
                                                   {;}
-#line 1471 "y.tab.c"
+#line 1470 "y.tab.c"
     break;
 
   case 5:
-#line 24 "jucompiler.y"
+#line 26 "jucompiler.y"
                                                   {;}
-#line 1477 "y.tab.c"
+#line 1476 "y.tab.c"
     break;
 
   case 6:
-#line 25 "jucompiler.y"
+#line 27 "jucompiler.y"
                                                   {;}
-#line 1483 "y.tab.c"
+#line 1482 "y.tab.c"
     break;
 
   case 7:
-#line 27 "jucompiler.y"
+#line 29 "jucompiler.y"
                                                   {;}
-#line 1489 "y.tab.c"
+#line 1488 "y.tab.c"
     break;
 
   case 8:
-#line 29 "jucompiler.y"
+#line 31 "jucompiler.y"
                                                   {;}
-#line 1495 "y.tab.c"
+#line 1494 "y.tab.c"
     break;
 
   case 9:
-#line 30 "jucompiler.y"
+#line 32 "jucompiler.y"
                                                   {;}
-#line 1501 "y.tab.c"
+#line 1500 "y.tab.c"
     break;
 
   case 11:
-#line 33 "jucompiler.y"
+#line 36 "jucompiler.y"
                                                 {;}
-#line 1507 "y.tab.c"
+#line 1506 "y.tab.c"
     break;
 
   case 12:
-#line 35 "jucompiler.y"
+#line 38 "jucompiler.y"
                                                   {;}
-#line 1513 "y.tab.c"
+#line 1512 "y.tab.c"
     break;
 
   case 13:
-#line 36 "jucompiler.y"
+#line 39 "jucompiler.y"
                                                   {;}
-#line 1519 "y.tab.c"
+#line 1518 "y.tab.c"
     break;
 
   case 14:
-#line 37 "jucompiler.y"
+#line 40 "jucompiler.y"
                                                   {;}
-#line 1525 "y.tab.c"
+#line 1524 "y.tab.c"
     break;
 
   case 15:
-#line 39 "jucompiler.y"
+#line 42 "jucompiler.y"
                                                   {;}
-#line 1531 "y.tab.c"
+#line 1530 "y.tab.c"
     break;
 
   case 16:
-#line 40 "jucompiler.y"
+#line 43 "jucompiler.y"
                                                   {;}
-#line 1537 "y.tab.c"
+#line 1536 "y.tab.c"
     break;
 
   case 17:
-#line 41 "jucompiler.y"
+#line 44 "jucompiler.y"
                                                   {;}
-#line 1543 "y.tab.c"
+#line 1542 "y.tab.c"
     break;
 
   case 18:
-#line 42 "jucompiler.y"
+#line 45 "jucompiler.y"
                                                   {;}
-#line 1549 "y.tab.c"
+#line 1548 "y.tab.c"
     break;
 
   case 19:
-#line 44 "jucompiler.y"
+#line 47 "jucompiler.y"
                                                   {;}
-#line 1555 "y.tab.c"
+#line 1554 "y.tab.c"
     break;
 
   case 20:
-#line 45 "jucompiler.y"
+#line 48 "jucompiler.y"
                                                   {;}
-#line 1561 "y.tab.c"
+#line 1560 "y.tab.c"
     break;
 
   case 21:
-#line 46 "jucompiler.y"
+#line 49 "jucompiler.y"
                                                   {;}
-#line 1567 "y.tab.c"
+#line 1566 "y.tab.c"
     break;
 
   case 22:
-#line 48 "jucompiler.y"
+#line 51 "jucompiler.y"
                                                   {;}
-#line 1573 "y.tab.c"
+#line 1572 "y.tab.c"
     break;
 
   case 23:
-#line 50 "jucompiler.y"
+#line 53 "jucompiler.y"
                                                   {;}
-#line 1579 "y.tab.c"
+#line 1578 "y.tab.c"
     break;
 
   case 24:
-#line 51 "jucompiler.y"
+#line 54 "jucompiler.y"
                                                   {;}
-#line 1585 "y.tab.c"
+#line 1584 "y.tab.c"
     break;
 
   case 25:
-#line 53 "jucompiler.y"
+#line 56 "jucompiler.y"
                                                   {;}
-#line 1591 "y.tab.c"
+#line 1590 "y.tab.c"
     break;
 
   case 26:
-#line 54 "jucompiler.y"
+#line 57 "jucompiler.y"
                                                   {;}
-#line 1597 "y.tab.c"
+#line 1596 "y.tab.c"
     break;
 
   case 27:
-#line 56 "jucompiler.y"
+#line 59 "jucompiler.y"
                                                {;}
-#line 1603 "y.tab.c"
+#line 1602 "y.tab.c"
     break;
 
   case 29:
-#line 58 "jucompiler.y"
+#line 62 "jucompiler.y"
                                                   {;}
-#line 1609 "y.tab.c"
+#line 1608 "y.tab.c"
     break;
 
   case 30:
-#line 59 "jucompiler.y"
+#line 63 "jucompiler.y"
                                                   {;}
-#line 1615 "y.tab.c"
+#line 1614 "y.tab.c"
     break;
 
 
-#line 1619 "y.tab.c"
+#line 1618 "y.tab.c"
 
       default: break;
     }
@@ -1847,4 +1846,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 61 "jucompiler.y"
+#line 95 "jucompiler.y"
