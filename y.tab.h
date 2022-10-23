@@ -96,7 +96,8 @@ extern int yydebug;
     RESERVED = 302,
     BOOLLIT = 303,
     ID = 304,
-    REALLIT = 305
+    REALLIT = 305,
+    UNARY = 306
   };
 #endif
 /* Tokens.  */
@@ -148,6 +149,7 @@ extern int yydebug;
 #define BOOLLIT 303
 #define ID 304
 #define REALLIT 305
+#define UNARY 306
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -159,7 +161,7 @@ union YYSTYPE
     char* value;
     struct node *node;
 
-#line 163 "y.tab.h"
+#line 165 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
