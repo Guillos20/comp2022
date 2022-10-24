@@ -1,17 +1,21 @@
 %{
+    //./gocompiler $flag < $path/$2.dgo $sort | diff $path/$2.out - -y
     #include <stdbool.h>
     #include <stdio.h>
     #include <stdlib.h>
 
+    #include "struct.h"
+    #include "y.tab.h"
+
     int yylex(void);
-    void yyerror (const char *s);
-    
+    extern void yyerror (const char *s);
+    extern Node *root;
 %}
 
 %union{
     char *stringValue;
     char* value;
-    struct node *node;
+    struct Node *node;
 }
 
 %token <stringValue> ELSE DOTLENGTH DOUBLE AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ SEMICOLON ARROW LSHIFT RSHIFT XOR BOOL CLASS IF INT  PRINT PARSEINT PUBLIC RETURN STATIC STRING VOID WHILE 

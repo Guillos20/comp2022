@@ -6,6 +6,7 @@
     #include <stdbool.h>
     #include <string.h>
     #include "y.tab.h"
+    #include "struct.h"
 
 
     int svLine = 1;
@@ -17,6 +18,7 @@
     int line_yacc = 0;
     int col_yacc = 0;
     int error = 0;
+    Node *root;
 %}
 %x STR COM1 COM2
 
@@ -105,56 +107,56 @@ illseq          \\[^fnrt\\\"\r\n]?
 <STR>.             {coluna += yyleng;}
 <STR>{strlit}      {coluna += yyleng;}
 
-{else}            {coluna += yyleng;if(fc == 1){printf("ELSE\n");}}
-{dotlength}       {coluna += yyleng;if(fc == 1){printf("DOTLENGTH\n");}}
-{intlit}          {coluna += yyleng;if(fc == 1){printf("INTLIT(%s)\n",yytext);}}
-{double}          {coluna += yyleng;if(fc == 1){printf("DOUBLE\n");}}
-{reserved}        {coluna += yyleng;if(fc == 1){printf("RESERVED(%s)\n",yytext);}}
-{and}             {coluna += yyleng;if(fc == 1){printf("AND\n");}}
-{assign}          {coluna += yyleng;if(fc == 1){printf("ASSIGN\n");}}
-{star}            {coluna += yyleng;if(fc == 1){printf("STAR\n");}}
-{comma}           {coluna += yyleng;if(fc == 1){printf("COMMA\n");}}
-{div}             {coluna += yyleng;if(fc == 1){printf("DIV\n");}}
-{eq}              {coluna += yyleng;if(fc == 1){printf("EQ\n");}}
-{ge}              {coluna += yyleng;if(fc == 1){printf("GE\n");}}
-{gt}              {coluna += yyleng;if(fc == 1){printf("GT\n");}}
-{lbrace}          {coluna += yyleng;if(fc == 1){printf("LBRACE\n");}}
-{le}              {coluna += yyleng;if(fc == 1){printf("LE\n");}}
-{lpar}            {coluna += yyleng;if(fc == 1){printf("LPAR\n");}}
-{lsq}             {coluna += yyleng;if(fc == 1){printf("LSQ\n");}}
-{lt}              {coluna += yyleng;if(fc == 1){printf("LT\n");}}
-{minus}           {coluna += yyleng;if(fc == 1){printf("MINUS\n");}}
-{mod}             {coluna += yyleng;if(fc == 1){printf("MOD\n");}}
-{ne}              {coluna += yyleng;if(fc == 1){printf("NE\n");}}
-{not}             {coluna += yyleng;if(fc == 1){printf("NOT\n");}}
-{boollit}         {coluna += yyleng;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);}}
-{or}              {coluna += yyleng;if(fc == 1){printf("OR\n");}}
-{plus}            {coluna += yyleng;if(fc == 1){printf("PLUS\n");}}
-{rbrace}          {coluna += yyleng;if(fc == 1){printf("RBRACE\n");}}
-{rpar}            {coluna += yyleng;if(fc == 1){printf("RPAR\n");}}
-{rsq}             {coluna += yyleng;if(fc == 1){printf("RSQ\n");}}
-{semicolon}       {coluna += yyleng;if(fc == 1){printf("SEMICOLON\n");}}
-{arrow}           {coluna += yyleng;if(fc == 1){printf("ARROW\n");}}
-{lshift}          {coluna += yyleng;if(fc == 1){printf("LSHIFT\n");}}
-{rshift}          {coluna += yyleng;if(fc == 1){printf("RSHIFT\n");}}
-{xor}             {coluna += yyleng;if(fc == 1){printf("XOR\n");}}
-{bool}            {coluna += yyleng;if(fc == 1){printf("BOOL\n");}}
-{class}           {coluna += yyleng;if(fc == 1){printf("CLASS\n");}}
-{if}              {coluna += yyleng;if(fc == 1){printf("IF\n");}}
-{int}             {coluna += yyleng;if(fc == 1){printf("INT\n");}}
-{print}           {coluna += yyleng;if(fc == 1){printf("PRINT\n");}}
-{parseint}        {coluna += yyleng;if(fc == 1){printf("PARSEINT\n");}}
-{public}          {coluna += yyleng;if(fc == 1){printf("PUBLIC\n");}}
-{return}          {coluna += yyleng;if(fc == 1){printf("RETURN\n");}}
-{static}          {coluna += yyleng;if(fc == 1){printf("STATIC\n");}}
-{string}          {coluna += yyleng;if(fc == 1){printf("STRING\n");}}
-{void}            {coluna += yyleng;if(fc == 1){printf("VOID\n");}}
-{while}           {coluna += yyleng;if(fc == 1){printf("WHILE\n");}}
-{id}              {coluna += yyleng;if(fc == 1){printf("ID(%s)\n",yytext);}}
+{else}            {coluna += yyleng;if(fc == 1){printf("ELSE\n");}else return ELSE;}
+{dotlength}       {coluna += yyleng;if(fc == 1){printf("DOTLENGTH\n");}else return DOTLENGTH;}
+{intlit}          {coluna += yyleng;if(fc == 1){printf("INTLIT(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext);return INTLIT;};}
+{double}          {coluna += yyleng;if(fc == 1){printf("DOUBLE\n");}else return DOUBLE;}
+{reserved}        {coluna += yyleng;if(fc == 1){printf("RESERVED(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext);return RESERVED;};}
+{and}             {coluna += yyleng;if(fc == 1){printf("AND\n");}else return AND;}
+{assign}          {coluna += yyleng;if(fc == 1){printf("ASSIGN\n");}else return ASSIGN;}
+{star}            {coluna += yyleng;if(fc == 1){printf("STAR\n");}else return STAR;}
+{comma}           {coluna += yyleng;if(fc == 1){printf("COMMA\n");}else return COMMA;}
+{div}             {coluna += yyleng;if(fc == 1){printf("DIV\n");}else return DIV;}
+{eq}              {coluna += yyleng;if(fc == 1){printf("EQ\n");}else return EQ;}
+{ge}              {coluna += yyleng;if(fc == 1){printf("GE\n");}else return GE;}
+{gt}              {coluna += yyleng;if(fc == 1){printf("GT\n");}else return GT;}
+{lbrace}          {coluna += yyleng;if(fc == 1){printf("LBRACE\n");}else return LBRACE;}
+{le}              {coluna += yyleng;if(fc == 1){printf("LE\n");}else return LE;}
+{lpar}            {coluna += yyleng;if(fc == 1){printf("LPAR\n");}else return LPAR;}
+{lsq}             {coluna += yyleng;if(fc == 1){printf("LSQ\n");}else return LSQ;}
+{lt}              {coluna += yyleng;if(fc == 1){printf("LT\n");}else return LT;}
+{minus}           {coluna += yyleng;if(fc == 1){printf("MINUS\n");}else return MINUS;}
+{mod}             {coluna += yyleng;if(fc == 1){printf("MOD\n");}else return MOD;}
+{ne}              {coluna += yyleng;if(fc == 1){printf("NE\n");}else return NE;}
+{not}             {coluna += yyleng;if(fc == 1){printf("NOT\n");}else return NOT;}
+{boollit}         {coluna += yyleng;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext); return BOOLLIT;};}
+{or}              {coluna += yyleng;if(fc == 1){printf("OR\n");}else return OR;}
+{plus}            {coluna += yyleng;if(fc == 1){printf("PLUS\n");}else return PLUS;}
+{rbrace}          {coluna += yyleng;if(fc == 1){printf("RBRACE\n");}else return RBRACE;}
+{rpar}            {coluna += yyleng;if(fc == 1){printf("RPAR\n");}else return RPAR;}
+{rsq}             {coluna += yyleng;if(fc == 1){printf("RSQ\n");}else return RSQ;}
+{semicolon}       {coluna += yyleng;if(fc == 1){printf("SEMICOLON\n");}else return SEMICOLON;}
+{arrow}           {coluna += yyleng;if(fc == 1){printf("ARROW\n");}else return ARROW;}
+{lshift}          {coluna += yyleng;if(fc == 1){printf("LSHIFT\n");}else return LSHIFT;}
+{rshift}          {coluna += yyleng;if(fc == 1){printf("RSHIFT\n");}else return RSHIFT;}
+{xor}             {coluna += yyleng;if(fc == 1){printf("XOR\n");}else return XOR;}
+{bool}            {coluna += yyleng;if(fc == 1){printf("BOOL\n");}else return BOOL;}
+{class}           {coluna += yyleng;if(fc == 1){printf("CLASS\n");}else return CLASS;}
+{if}              {coluna += yyleng;if(fc == 1){printf("IF\n");}else return IF;}
+{int}             {coluna += yyleng;if(fc == 1){printf("INT\n");}else return INT;}
+{print}           {coluna += yyleng;if(fc == 1){printf("PRINT\n");}else return PRINT;}
+{parseint}        {coluna += yyleng;if(fc == 1){printf("PARSEINT\n");}else return PARSEINT;}
+{public}          {coluna += yyleng;if(fc == 1){printf("PUBLIC\n");}else return PUBLIC;}
+{return}          {coluna += yyleng;if(fc == 1){printf("RETURN\n");}else return RETURN;}
+{static}          {coluna += yyleng;if(fc == 1){printf("STATIC\n");}else return STATIC;}
+{string}          {coluna += yyleng;if(fc == 1){printf("STRING\n");}else return STRING;}
+{void}            {coluna += yyleng;if(fc == 1){printf("VOID\n");}else return VOID;}
+{while}           {coluna += yyleng;if(fc == 1){printf("WHILE\n");}else return WHILE;}
+{id}              {coluna += yyleng;if(fc == 1){printf("ID(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext); return ID;};}
 {whitespace}      {coluna += yyleng;}
 \n|\r\n|\r        {coluna = 1;linha += 1;}
 .                 {printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext); coluna += yyleng;}
-{reallit}         {coluna += yyleng;if(fc == 1){printf("REALLIT(%s)\n",yytext);};}
+{reallit}         {coluna += yyleng;if(fc == 1){printf("REALLIT(%s)\n",yytext);} else{yylval.stringValue = strdup(yytext);return REALLIT;};}
 
 
 %%
@@ -173,13 +175,15 @@ int main(int argc, char** argv){
         if(strcmp(argv[i], "-t") == 0){
             fc = 3;
             yyparse();
-            
+            print_tree(root, 0);
+                        
         }
     }
     
     return 0;
     }
     void yyerror(char* s){
+    error = 1;
     printf("Line %d, column %d: %s: %s\n", line_yacc, col_yacc, s, yytext);
 }
 
