@@ -18,60 +18,78 @@
 %token <stringValue> STRLIT INTLIT RESERVED BOOLLIT ID REALLIT
 %type <node> Program DeclMult MethodDecl FieldDecl COMID Type MethodHeader FormalParams COMTYPID MethodBody BODY VarDecl Statement MethodInvocation COMMAExpr Assignment ParseArgs Expr
 
+%left ARROW
 %left COMMA
-%right ASSIGN 
+%right ASSIGN
 %left OR
 %left AND
-%left EQ NE GE GT LE LT
+%left XOR
+%left NE EQ
+%left GE LE LT GT
+%left LSHIFT RSHIFT
 %left PLUS MINUS
 %left STAR DIV MOD
-%right NOT UNARY   
-%nonassoc LPAR 
-%nonassoc RPAR
+%right NOT UNARY
+%left RSQ LSQ RPAR LPAR
+
+%nonassoc IF
+%nonassoc ELSE
+
 %%
 
-Program: CLASS ID LBRACE DeclMult RBRACE          {;}
-       
+Program: CLASS ID LBRACE DeclMult RBRACE          {;}   
 ;
-DeclMult:  DeclMult MethodDecl                              {;}
-        |  DeclMult FieldDecl                               {;}
-        |  DeclMult SEMICOLON                               {;} 
-        |{;}
+
+DeclMult:  DeclMult MethodDecl                    {;}
+        |  DeclMult FieldDecl                     {;}
+        |  DeclMult SEMICOLON                     {;} 
+        |                                         {;}
         ;
+
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody {;}
 ;
+
 FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {;}
          | PUBLIC STATIC Type ID SEMICOLON        {;} 
-         | error SEMICOLON {;}
+         | error SEMICOLON                        {;}
 ;
-COMID: COMID COMMA ID{;}
 
-    |                                           {;}
+COMID: COMID COMMA ID                             {;}
+    |                                             {;}
 ;
+
 Type: BOOL                                        {;}
     | INT                                         {;}
     | DOUBLE                                      {;}
 ;
+
 MethodHeader: Type ID LPAR FormalParams RPAR      {;}
             | Type ID LPAR RPAR                   {;}
             | VOID ID LPAR FormalParams RPAR      {;}
             | VOID ID LPAR RPAR                   {;}
 ;
+
 FormalParams: Type ID                             {;}
             | Type ID COMTYPID                    {;}
             | STRING LSQ RSQ ID                   {;}
 ;
-COMTYPID: COMTYPID COMMA Type ID                           {;}
-|{;};
+
+COMTYPID: COMTYPID COMMA Type ID                  {;}
+|                                                 {;}
+;
+
 MethodBody: LBRACE BODY RBRACE                    {;}
         |   LBRACE RBRACE                         {;}
 ;
+
 BODY: Statement                                   {;}
     | VarDecl                                     {;}
 ;
-VarDecl:Type ID COMID SEMICOLON                {;}
+
+VarDecl:Type ID COMID SEMICOLON                   {;}
     | Type SEMICOLON
 ;
+
 Statement: LBRACE Statement RBRACE                {;}
     | LBRACE RBRACE                               {;}
     | IF LPAR Expr RPAR Statement                 {;}
@@ -85,46 +103,52 @@ Statement: LBRACE Statement RBRACE                {;}
     | PRINT LPAR Expr RPAR SEMICOLON              {;}
     | PRINT LPAR STRLIT RPAR SEMICOLON            {;}
     | error SEMICOLON                             {;}
+    ;
 
+MethodInvocation: ID LPAR RPAR                    {;}
+    | ID LPAR Expr COMMAExpr RPAR                 {;}
+    | ID LPAR error RPAR                          {;}
     ;
-MethodInvocation: ID LPAR RPAR {;}
-    | ID LPAR Expr COMMAExpr RPAR {;}
-    | ID LPAR error RPAR{;}
-    ;
-COMMAExpr: COMMAExpr COMMA Expr{;}
-|{;};
-Assignment: ID ASSIGN Expr{;}
+
+COMMAExpr: COMMAExpr COMMA Expr                   {;}
+|                                                 {;}
 ;
+
+Assignment: ID ASSIGN Expr                        {;}
+;
+
 ParseArgs:
-    PARSEINT LPAR ID LSQ Expr RSQ RPAR {;}
-    |PARSEINT LPAR error RPAR{;}
+    PARSEINT LPAR ID LSQ Expr RSQ RPAR            {;}
+    |PARSEINT LPAR error RPAR                     {;}
     ;
+
 Expr:
-    Expr OR Expr                             {;}
-    |Expr XOR Expr                           {;}
-    |Expr LSHIFT Expr                        {;}
-    |Expr RSHIFT Expr                        {;}
-    |Expr AND Expr                           {;} 
-    |Expr LT Expr                            {;}
-    |Expr GT Expr                            {;}
-    |Expr EQ Expr                            {;}
-    |Expr NE Expr                            {;}
-    |Expr LE Expr                            {;}
-    |Expr GE Expr                            {;}
-    |Expr PLUS Expr                          {;}
-    |Expr MINUS Expr                         {;}
-    |Expr STAR Expr                          {;}
-    |Expr DIV Expr                           {;}
-    |Expr MOD Expr                           {;}
-    |NOT Expr        %prec UNARY             {;}
-    |MINUS Expr      %prec UNARY             {;}
-    |PLUS Expr       %prec UNARY             {;}
-    |INTLIT                                  {;}
-    |REALLIT                                 {;}
-    |ID                                      {;}
-    |ID DOTLENGTH                            {;}
-    |BOOLLIT                                 {;}
-    |LPAR Expr RPAR                          {;}
-    |LPAR error RPAR                         {;}
+    Expr OR Expr                                  {;}
+    |Expr XOR Expr                                {;}
+    |Expr LSHIFT Expr                             {;}
+    |Expr RSHIFT Expr                             {;}
+    |Expr AND Expr                                {;} 
+    |Expr LT Expr                                 {;}
+    |Expr GT Expr                                 {;}
+    |Expr EQ Expr                                 {;}
+    |Expr NE Expr                                 {;}
+    |Expr LE Expr                                 {;}
+    |Expr GE Expr                                 {;}
+    |Expr PLUS Expr                               {;}
+    |Expr MINUS Expr                              {;}
+    |Expr STAR Expr                               {;}
+    |Expr DIV Expr                                {;}
+    |Expr MOD Expr                                {;}
+    |NOT Expr        %prec UNARY                  {;}
+    |MINUS Expr      %prec UNARY                  {;}
+    |PLUS Expr       %prec UNARY                  {;}
+    |INTLIT                                       {;}
+    |REALLIT                                      {;}
+    |ID                                           {;}
+    |ID DOTLENGTH                                 {;}
+    |BOOLLIT                                      {;}
+    |LPAR Expr RPAR                               {;}
+    |LPAR error RPAR                              {;}
 ;
+
 %%
