@@ -18,7 +18,6 @@
     int col_yacc = 0;
     int error = 0;
 %}
-
 %x STR COM1 COM2
 
 

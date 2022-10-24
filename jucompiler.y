@@ -85,7 +85,6 @@ BODY: Statement                                   {;}
 ;
 
 VarDecl:Type ID COMID SEMICOLON                   {;}
-    | Type SEMICOLON
 ;
 
 Statement: LBRACE Statement RBRACE                {;}
@@ -98,6 +97,7 @@ Statement: LBRACE Statement RBRACE                {;}
     | MethodInvocation SEMICOLON                  {;}
     | Assignment SEMICOLON                        {;}
     | ParseArgs SEMICOLON                         {;}
+    | SEMICOLON                                   {;}
     | PRINT LPAR Expr RPAR SEMICOLON              {;}
     | PRINT LPAR STRLIT RPAR SEMICOLON            {;}
     | error SEMICOLON                             {;}
@@ -147,6 +147,10 @@ Expr:
     |BOOLLIT                                      {;}
     |LPAR Expr RPAR                               {;}
     |LPAR error RPAR                              {;}
+    |MethodInvocation                             {;}
+    |Assignment                                   {;}
+    |ParseArgs                                    {;}
+
 ;
 
 %%
