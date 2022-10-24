@@ -31,7 +31,7 @@ exp             ("E"|"e")("+"|"-")?{realdigits}
 
 id              {id_letter}({id_letter}|{digit})*
 intlit          [0-9]|{intdigits}
-reallit         {realdigits}?"."{realdigits}?{exp}?|{realdigits}{exp}
+reallit         {realdigits}"."({realdigits}?{exp}?)|{realdigits}{exp}|"."{realdigits}{exp}?
 strlit          ([^\n\r"\\]|\\n|\\f|\\r|\\\\|\\\"|\\t)*
 whitespace      (" "|\t|\f)
 
@@ -156,6 +156,7 @@ illseq          \\[^fnrt\\\"\r\n]?
 \n|\r\n|\r        {coluna = 1;linha += 1;}
 .                 {printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext); coluna += yyleng;}
 {reallit}         {coluna += yyleng;if(fc == 1){printf("REALLIT(%s)\n",yytext);};}
+
 
 %%
 

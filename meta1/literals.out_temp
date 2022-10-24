@@ -36,7 +36,8 @@ ID(e)
 MINUS
 INTLIT(1)
 ID(e2)
-REALLIT(.e2)
+Line 27, col 1: illegal character (.)
+ID(e2)
 STRLIT("string")
 STRLIT("varios escapes \n \f \r")
 Line 31, col 1: unterminated string literal
