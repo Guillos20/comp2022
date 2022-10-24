@@ -50,7 +50,6 @@ MethodDecl: PUBLIC STATIC MethodHeader MethodBody {;}
 ;
 
 FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {;}
-         | PUBLIC STATIC Type ID SEMICOLON        {;} 
          | error SEMICOLON                        {;}
 ;
 
@@ -69,8 +68,7 @@ MethodHeader: Type ID LPAR FormalParams RPAR      {;}
             | VOID ID LPAR RPAR                   {;}
 ;
 
-FormalParams: Type ID                             {;}
-            | Type ID COMTYPID                    {;}
+FormalParams: Type ID COMTYPID                    {;}
             | STRING LSQ RSQ ID                   {;}
 ;
 
