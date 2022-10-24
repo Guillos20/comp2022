@@ -16,6 +16,7 @@
     bool ignoreSTR = false;
     int line_yacc = 0;
     int col_yacc = 0;
+    int error = 0;
 %}
 
 %x STR COM1 COM2
@@ -108,7 +109,6 @@ illseq          \\[^fnrt\\\"\r\n]?
 {else}            {coluna += yyleng;if(fc == 1){printf("ELSE\n");}return ELSE;}
 {dotlength}       {coluna += yyleng;if(fc == 1){printf("DOTLENGTH\n");}return DOTLENGTH;}
 {intlit}          {coluna += yyleng;if(fc == 1){printf("INTLIT(%s)\n",yytext);}yylval.stringValue = (char*) strdup(yytext);}
-
 {double}          {coluna += yyleng;if(fc == 1){printf("DOUBLE\n");}return DOUBLE;}
 {reserved}        {coluna += yyleng;if(fc == 1){printf("RESERVED(%s)\n",yytext);}yylval.stringValue = (char*) strdup(yytext);}
 {and}             {coluna += yyleng;if(fc == 1){printf("AND\n");}return AND;}
@@ -140,12 +140,12 @@ illseq          \\[^fnrt\\\"\r\n]?
 {rshift}          {coluna += yyleng;if(fc == 1){printf("RSHIFT\n");}return RSHIFT;}
 {xor}             {coluna += yyleng;if(fc == 1){printf("XOR\n");}return XOR;}
 {bool}            {coluna += yyleng;if(fc == 1){printf("BOOL\n");}return BOOL;}
-{class}           {coluna += yyleng;if(fc == 1){printf("CLASS\n");}return CLASS;}
+{class}           {coluna += yyleng;if(fc == 1){printf("CLASS\n");}if (fc ==3)return CLASS;}
 {if}              {coluna += yyleng;if(fc == 1){printf("IF\n");}return IF;}
 {int}             {coluna += yyleng;if(fc == 1){printf("INT\n");}return INT;}
 {print}           {coluna += yyleng;if(fc == 1){printf("PRINT\n");}return PRINT;}
 {parseint}        {coluna += yyleng;if(fc == 1){printf("PARSEINT\n");}return PARSEINT;}
-{public}          {coluna += yyleng;if(fc == 1){printf("PUBLIC\n");}return PUBLIC;}
+{public}          {coluna += yyleng;if(fc == 1){printf("PUBLIC\n");} if (fc ==3)return PUBLIC;}
 {return}          {coluna += yyleng;if(fc == 1){printf("RETURN\n");}return RETURN;}
 {static}          {coluna += yyleng;if(fc == 1){printf("STATIC\n");}return STATIC;}
 {string}          {coluna += yyleng;if(fc == 1){printf("STRING\n");}return STRING;}
@@ -169,18 +169,20 @@ int main(int argc, char** argv){
             yylex();
         }
         if(strcmp(argv[i], "-e1") == 0){
-            fc = 2;
+            fc = 1;
             yylex();
         }
         if(strcmp(argv[i], "-t") == 0){
             fc = 3;
             yyparse();
+            
         }
     }
     
     return 0;
     }
     void yyerror(char* s){
+    error = 1;
     printf("Line %d, column %d: %s: %s\n", line_yacc, col_yacc, s, yytext);
 }
 

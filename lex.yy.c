@@ -818,9 +818,10 @@ char *yytext;
     bool ignoreSTR = false;
     int line_yacc = 0;
     int col_yacc = 0;
-#line 822 "lex.yy.c"
+    int error = 0;
+#line 823 "lex.yy.c"
 
-#line 824 "lex.yy.c"
+#line 825 "lex.yy.c"
 
 #define INITIAL 0
 #define STR 1
@@ -1040,11 +1041,11 @@ YY_DECL
 		}
 
 	{
-#line 85 "jucompiler.l"
+#line 86 "jucompiler.l"
 
 
 
-#line 1048 "lex.yy.c"
+#line 1049 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1103,98 +1104,98 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 88 "jucompiler.l"
+#line 89 "jucompiler.l"
 {svPoint = coluna; svLine = linha; coluna += yyleng;BEGIN COM1;} 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 89 "jucompiler.l"
+#line 90 "jucompiler.l"
 {coluna += yyleng;BEGIN 0;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 90 "jucompiler.l"
+#line 91 "jucompiler.l"
 {linha+=1;coluna = 1;}
 	YY_BREAK
 case YY_STATE_EOF(COM1):
-#line 91 "jucompiler.l"
+#line 92 "jucompiler.l"
 {printf("Line %d, col %d: unterminated comment\n",svLine,svPoint);BEGIN 0;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 92 "jucompiler.l"
+#line 93 "jucompiler.l"
 {coluna += yyleng;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 94 "jucompiler.l"
+#line 95 "jucompiler.l"
 {BEGIN COM2;} 
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 95 "jucompiler.l"
+#line 96 "jucompiler.l"
 {linha +=1;coluna =1;BEGIN 0;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 96 "jucompiler.l"
+#line 97 "jucompiler.l"
 {coluna=yyleng;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 99 "jucompiler.l"
+#line 100 "jucompiler.l"
 {BEGIN STR;svPoint = coluna; coluna += yyleng;ignoreSTR = false;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 100 "jucompiler.l"
+#line 101 "jucompiler.l"
 {if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}coluna += yyleng;BEGIN 0;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 101 "jucompiler.l"
+#line 102 "jucompiler.l"
 {if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}coluna += yyleng;yylval.stringValue = (char*) strdup(yytext);BEGIN 0;} //chekar isto do yyval, provavel tem de ter as condicoes do argumento da command line  
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 102 "jucompiler.l"
+#line 103 "jucompiler.l"
 {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha +=1; coluna = 1 ; BEGIN 0;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 103 "jucompiler.l"
+#line 104 "jucompiler.l"
 {printf("Line %d, col %d: invalid escape sequence (%s)\n",linha,coluna,yytext); coluna+= yyleng; ignoreSTR = true;}                  
 	YY_BREAK
 case YY_STATE_EOF(STR):
-#line 104 "jucompiler.l"
+#line 105 "jucompiler.l"
 {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); BEGIN 0;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 105 "jucompiler.l"
+#line 106 "jucompiler.l"
 {coluna += yyleng;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 106 "jucompiler.l"
+#line 107 "jucompiler.l"
 {coluna += yyleng;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 108 "jucompiler.l"
+#line 109 "jucompiler.l"
 {coluna += yyleng;if(fc == 1){printf("ELSE\n");}return ELSE;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 109 "jucompiler.l"
+#line 110 "jucompiler.l"
 {coluna += yyleng;if(fc == 1){printf("DOTLENGTH\n");}return DOTLENGTH;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 110 "jucompiler.l"
+#line 111 "jucompiler.l"
 {coluna += yyleng;if(fc == 1){printf("INTLIT(%s)\n",yytext);}yylval.stringValue = (char*) strdup(yytext);}
 	YY_BREAK
 case 18:
@@ -1355,7 +1356,7 @@ YY_RULE_SETUP
 case 49:
 YY_RULE_SETUP
 #line 143 "jucompiler.l"
-{coluna += yyleng;if(fc == 1){printf("CLASS\n");}return CLASS;}
+{coluna += yyleng;if(fc == 1){printf("CLASS\n");}if (fc ==3)return CLASS;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
@@ -1380,7 +1381,7 @@ YY_RULE_SETUP
 case 54:
 YY_RULE_SETUP
 #line 148 "jucompiler.l"
-{coluna += yyleng;if(fc == 1){printf("PUBLIC\n");}return PUBLIC;}
+{coluna += yyleng;if(fc == 1){printf("PUBLIC\n");} if (fc ==3)return PUBLIC;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
@@ -1438,7 +1439,7 @@ YY_RULE_SETUP
 #line 162 "jucompiler.l"
 ECHO;
 	YY_BREAK
-#line 1442 "lex.yy.c"
+#line 1443 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COM2):
 	yyterminate();
@@ -2455,18 +2456,20 @@ int main(int argc, char** argv){
             yylex();
         }
         if(strcmp(argv[i], "-e1") == 0){
-            fc = 2;
+            fc = 1;
             yylex();
         }
         if(strcmp(argv[i], "-t") == 0){
             fc = 3;
             yyparse();
+            
         }
     }
     
     return 0;
     }
     void yyerror(char* s){
+    error = 1;
     printf("Line %d, column %d: %s: %s\n", line_yacc, col_yacc, s, yytext);
 }
 
