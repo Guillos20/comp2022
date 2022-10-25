@@ -41,29 +41,29 @@
 
 %%
 
-Program: CLASS ID LBRACE DeclMult RBRACE          {;}   
+Program: CLASS ID LBRACE DeclMult RBRACE          {$$ = root = createNode("Program",NULL,createNode("Id",$2,NULL,$4),NULL);}   
 ;
 
-DeclMult:  DeclMult MethodDecl                    {;}
+DeclMult:  DeclMult MethodDecl                    {if($1 == NULL){$$ = $2}else{$2}}//not sure
         |  DeclMult FieldDecl                     {;}
         |  DeclMult SEMICOLON                     {;} 
-        |                                         {;}
+        |                                         {$$ = NULL;}
         ;
 
-MethodDecl: PUBLIC STATIC MethodHeader MethodBody {;}
+MethodDecl: PUBLIC STATIC MethodHeader MethodBody {$$ = createNode("MethodDecl",NULL,createNode("MethodHeader",NULL,$3,createNode("MethodBody",NULL,$4,NULL)),NULL);}
 ;
 
-FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {;}
+FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {$$ = createNode("FieldDecl",NULL,createNode("Type",NULL,NULL,createNode("Id",$4,NULL,NULL)),$5);}//mandar o tipo para os filhos 
          | error SEMICOLON                        {;}
 ;
 
-COMID: COMID COMMA ID                             {;}
-    |                                             {;}
+COMID: COMID COMMA ID                             {$$ = createNode("FieldDecl",NULL,createNode(NULL,NULL,NULL,createNode("Id",$3,NULL,NULL)),$1);}
+    |                                             {$$ = NULL;}
 ;
 
-Type: BOOL                                        {;}
-    | INT                                         {;}
-    | DOUBLE                                      {;}
+Type: BOOL                                        {$$ = createNode("Bool",NULL,NULL,NULL);}
+    | INT                                         {$$ = createNode("Int",NULL,NULL,NULL);}
+    | DOUBLE                                      {$$ = createNode("Double",NULL,NULL,NULL);}
 ;
 
 MethodHeader: Type ID LPAR FormalParams RPAR      {;}
@@ -77,7 +77,7 @@ FormalParams: Type ID COMTYPID                    {;}
 ;
 
 COMTYPID: COMTYPID COMMA Type ID                  {;}
-|                                                 {;}
+|                                                 {$$= NULL;}
 ;
 
 MethodBody: LBRACE BODY RBRACE                    {;}
@@ -113,14 +113,13 @@ MethodInvocation: ID LPAR RPAR                    {;}
     ;
 
 COMMAExpr: COMMAExpr COMMA Expr                   {;}
-|                                                 {;}
+|                                                 {$$ = NULL;}
 ;
 
 Assignment: ID ASSIGN Expr                        {;}
 ;
 
-ParseArgs:
-    PARSEINT LPAR ID LSQ Expr RSQ RPAR            {;}
+ParseArgs:PARSEINT LPAR ID LSQ Expr RSQ RPAR            {;}
     |PARSEINT LPAR error RPAR                     {;}
     ;
 

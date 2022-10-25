@@ -13,4 +13,6 @@ Node *root;
 
 void print_tree(Node *node, int num);
 
+struct node *createNode(char *token, char *value,struct node *son,struct node *sibling);
+
 #endif //STRUCT_H

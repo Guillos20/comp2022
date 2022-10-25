@@ -5,10 +5,10 @@
 
 
 
-Node *create_node(char *token, char *value){
-    Node *n = (Node *)malloc(sizeof(Node));
-    n -> son = NULL;
-    n -> sibling = NULL;
+Node *create_node(char *token, char *value, struct node *son,struct node *sibling){
+    struct Node *n = (Node *)malloc(sizeof(Node));
+    n -> son = son;
+    n -> sibling = sibling;
     n -> token = token;
     n -> value = value;
     
