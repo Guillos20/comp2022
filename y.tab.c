@@ -1604,19 +1604,19 @@ yyreduce:
 
   case 3:
 #line 47 "jucompiler.y"
-                                                  {;}
+                                                  {(yyval.node) = (yyvsp[0].node); (yyvsp[0].node)->sibling =(yyvsp[-1].node);}
 #line 1609 "y.tab.c"
     break;
 
   case 4:
 #line 48 "jucompiler.y"
-                                                  {;}
+                                                  {(yyval.node) = (yyvsp[0].node); (yyvsp[0].node)->sibling = (yyvsp[-1].node);}
 #line 1615 "y.tab.c"
     break;
 
   case 5:
 #line 49 "jucompiler.y"
-                                                  {;}
+                                                  {(yyval.node) = (yyvsp[-1].node);}
 #line 1621 "y.tab.c"
     break;
 
@@ -1730,13 +1730,13 @@ yyreduce:
 
   case 24:
 #line 87 "jucompiler.y"
-                                                  {;}
+                                                  {(yyval.node) = (yyvsp[0].node); (yyvsp[0].node)->sibling = (yyvsp[-1].node);}
 #line 1735 "y.tab.c"
     break;
 
   case 25:
 #line 88 "jucompiler.y"
-                                                  {;}
+                                                  {(yyval.node) = (yyvsp[0].node); (yyvsp[0].node)->sibling = (yyvsp[-1].node);}
 #line 1741 "y.tab.c"
     break;
 

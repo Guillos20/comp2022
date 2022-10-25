@@ -44,9 +44,9 @@
 Program: CLASS ID LBRACE DeclMult RBRACE          {$$ = root = createNode("Program",NULL,createNode("Id",$2,NULL,$4),NULL);}   
 ;
 
-DeclMult:  DeclMult MethodDecl                    {;} //not sur
-        |  DeclMult FieldDecl                     {;}
-        |  DeclMult SEMICOLON                     {;} 
+DeclMult:  DeclMult MethodDecl                    {$$ = $2; $2->sibling =$1;} //not sur
+        |  DeclMult FieldDecl                     {$$ = $2; $2->sibling = $1;}
+        |  DeclMult SEMICOLON                     {$$ = $1;} 
         |                                         {$$ = NULL;}
         ;
 
@@ -84,8 +84,8 @@ COMTYPID: COMTYPID COMMA Type ID                  {$$ = createNode("ParamDecl",N
 MethodBody: LBRACE BODY RBRACE                    {$$=createNode("MethodBody",NULL,$2,NULL);}
 ;
 
-BODY: BODY Statement                              {;}//atribuir irmao
-    | BODY VarDecl                                {;}
+BODY: BODY Statement                              {$$ = $2; $2->sibling = $1;}
+    | BODY VarDecl                                {$$ = $2; $2->sibling = $1;}
     |                                             {$$=NULL;}
 ;
 
@@ -94,7 +94,7 @@ VarDecl:Type ID COMID SEMICOLON                   {$$ = createNode("VarDecl",NUL
 
 Statement: LBRACE Statement RBRACE                {$$ = $2;}
     | LBRACE RBRACE                               {$$ = NULL;}
-    | IF LPAR Expr RPAR Statement                 {;}
+    | IF LPAR Expr RPAR Statement                 {;}// perguntar ao stor sobre os blocks 
     | IF LPAR Expr RPAR Statement ELSE Statement  {;}
     | WHILE LPAR Expr RPAR Statement              {;}
     | RETURN SEMICOLON                            {$$ = createNode("Return",NULL,NULL,NULL);}
