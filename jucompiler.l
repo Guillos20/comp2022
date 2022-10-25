@@ -15,11 +15,13 @@
     int svPoint = 1;
     int fc = 0;
     bool ignoreSTR = false;
-    int line_yacc = 0;
-    int col_yacc = 0;
+    int line_yacc = 1;
+    int col_yacc = 1;
     int error = 0;
     Node *root;
+
 %}
+%option yylineno
 %x STR COM1 COM2
 
 
@@ -99,8 +101,8 @@ illseq          \\[^fnrt\\\"\r\n]?
 
 
 \"                 {BEGIN STR;svPoint = coluna; coluna += yyleng;ignoreSTR = false;error = 0;}
-<STR>\"            {BEGIN 0;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext); coluna += yyleng;}else{yylval.stringValue = (char*) strdup(yytext);}}
-<STR>{strlit}\"    {BEGIN 0;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);coluna += yyleng;}else{yylval.stringValue = (char*) strdup(yytext);}} //chekar isto do yyval, provavel tem de ter as condicoes do argumento da command line  
+<STR>\"            {BEGIN 0;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext); coluna += yyleng;}else{yylval.stringValue = (char*) strdup(yytext);return STRLIT;}}
+<STR>{strlit}\"    {BEGIN 0;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext); coluna += yyleng;}else{yylval.stringValue = (char*) strdup(yytext);return STRLIT;}} //chekar isto do yyval, provavel tem de ter as condicoes do argumento da command line  
 <STR>\r\n|\n|\r    {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha +=1; coluna = 1 ; BEGIN 0;}
 <STR>{illseq}      {printf("Line %d, col %d: invalid escape sequence (%s)\n",linha,coluna,yytext); coluna+= yyleng; ignoreSTR = true;}                  
 <STR><<EOF>>       {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint);BEGIN 0;}
@@ -109,7 +111,7 @@ illseq          \\[^fnrt\\\"\r\n]?
 
 {else}            {coluna += yyleng;if(fc == 1){printf("ELSE\n");}else return ELSE;}
 {dotlength}       {coluna += yyleng;if(fc == 1){printf("DOTLENGTH\n");}else return DOTLENGTH;}
-{intlit}          {coluna += yyleng;if(fc == 1){printf("INTLIT(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext);return INTLIT;};}
+{intlit}          {coluna += yyleng;if(fc == 1){printf("INTLIT(%s)\n",yytext);}else  {yylval.stringValue = strdup(yytext);return INTLIT;};}
 {double}          {coluna += yyleng;if(fc == 1){printf("DOUBLE\n");}else return DOUBLE;}
 {reserved}        {coluna += yyleng;if(fc == 1){printf("RESERVED(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext);return RESERVED;};}
 {and}             {coluna += yyleng;if(fc == 1){printf("AND\n");}else return AND;}
@@ -129,7 +131,7 @@ illseq          \\[^fnrt\\\"\r\n]?
 {mod}             {coluna += yyleng;if(fc == 1){printf("MOD\n");}else return MOD;}
 {ne}              {coluna += yyleng;if(fc == 1){printf("NE\n");}else return NE;}
 {not}             {coluna += yyleng;if(fc == 1){printf("NOT\n");}else return NOT;}
-{boollit}         {coluna += yyleng;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext); return BOOLLIT;};}
+{boollit}         {coluna += yyleng;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);} else {yylval.stringValue = strdup(yytext); return BOOLLIT;};}
 {or}              {coluna += yyleng;if(fc == 1){printf("OR\n");}else return OR;}
 {plus}            {coluna += yyleng;if(fc == 1){printf("PLUS\n");}else return PLUS;}
 {rbrace}          {coluna += yyleng;if(fc == 1){printf("RBRACE\n");}else return RBRACE;}
@@ -175,13 +177,13 @@ int main(int argc, char** argv){
         if(strcmp(argv[i], "-t") == 0){
             fc = 3;
             yyparse();
+            if(error==0){
             print_tree(root, 0);
-                        
+            }                   
         }
     }
-    
     return 0;
-    }
+}
     void yyerror(char* s){
     error = 1;
     printf("Line %d, column %d: %s: %s\n", line_yacc, col_yacc, s, yytext);

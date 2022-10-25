@@ -98,16 +98,16 @@ Grammar
    71     | ID DOTLENGTH
    72     | BOOLLIT
    73     | LPAR Expr RPAR
-   74     | LPAR error RPAR
-   75     | MethodInvocation
-   76     | Assignment
-   77     | ParseArgs
+   74     | MethodInvocation
+   75     | Assignment
+   76     | ParseArgs
+   77     | LPAR error RPAR
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
-    error (256) 8 40 43 48 74
+    error (256) 8 40 43 48 77
     ELSE <stringValue> (258) 30
     DOTLENGTH <stringValue> (259) 71
     DOUBLE <stringValue> (260) 13
@@ -121,7 +121,7 @@ Terminals, with rules where they appear
     GT <stringValue> (268) 55
     LBRACE <stringValue> (269) 1 22 23 27 28
     LE <stringValue> (270) 58
-    LPAR <stringValue> (271) 14 15 16 17 29 30 31 38 39 41 42 43 47 48 73 74
+    LPAR <stringValue> (271) 14 15 16 17 29 30 31 38 39 41 42 43 47 48 73 77
     LSQ <stringValue> (272) 19 47
     LT <stringValue> (273) 54
     MINUS <stringValue> (274) 61 66
@@ -131,7 +131,7 @@ Terminals, with rules where they appear
     OR <stringValue> (278) 49
     PLUS <stringValue> (279) 60 67
     RBRACE <stringValue> (280) 1 22 23 27 28
-    RPAR <stringValue> (281) 14 15 16 17 29 30 31 38 39 41 42 43 47 48 73 74
+    RPAR <stringValue> (281) 14 15 16 17 29 30 31 38 39 41 42 43 47 48 73 77
     RSQ <stringValue> (282) 19 47
     SEMICOLON <stringValue> (283) 4 7 8 26 32 33 34 35 36 37 38 39 40
     ARROW <stringValue> (284)
@@ -204,16 +204,16 @@ Nonterminals, with rules where they appear
         on right: 24 27 29 30 31
     MethodInvocation <node> (66)
         on left: 41 42 43
-        on right: 34 75
+        on right: 34 74
     COMMAExpr <node> (67)
         on left: 44 45
         on right: 42 44
     Assignment <node> (68)
         on left: 46
-        on right: 35 76
+        on right: 35 75
     ParseArgs <node> (69)
         on left: 47 48
-        on right: 36 77
+        on right: 36 76
     Expr <node> (70)
         on left: 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77
         on right: 29 30 31 33 38 42 44 46 47 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 73
@@ -775,7 +775,7 @@ State 58
 State 59
 
    73 Expr: LPAR . Expr RPAR
-   74     | LPAR . error RPAR
+   77     | LPAR . error RPAR
 
     error     shift, and go to state 91
     LPAR      shift, and go to state 59
@@ -900,23 +900,23 @@ State 67
 
 State 68
 
-   75 Expr: MethodInvocation .
+   74 Expr: MethodInvocation .
 
-    $default  reduce using rule 75 (Expr)
+    $default  reduce using rule 74 (Expr)
 
 
 State 69
 
-   76 Expr: Assignment .
+   75 Expr: Assignment .
 
-    $default  reduce using rule 76 (Expr)
+    $default  reduce using rule 75 (Expr)
 
 
 State 70
 
-   77 Expr: ParseArgs .
+   76 Expr: ParseArgs .
 
-    $default  reduce using rule 77 (Expr)
+    $default  reduce using rule 76 (Expr)
 
 
 State 71
@@ -1205,7 +1205,7 @@ State 90
 
 State 91
 
-   74 Expr: LPAR error . RPAR
+   77 Expr: LPAR error . RPAR
 
     RPAR  shift, and go to state 127
 
@@ -1877,9 +1877,9 @@ State 126
 
 State 127
 
-   74 Expr: LPAR error RPAR .
+   77 Expr: LPAR error RPAR .
 
-    $default  reduce using rule 74 (Expr)
+    $default  reduce using rule 77 (Expr)
 
 
 State 128

@@ -8,7 +8,7 @@
     #include "y.tab.h"
 
     int yylex(void);
-    extern void yyerror (const char *s);
+    extern void yyerror(char *s);
     extern Node *root;
 %}
 
@@ -18,7 +18,7 @@
     struct Node *node;
 }
 
-%token <stringValue> ELSE DOTLENGTH DOUBLE AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ SEMICOLON ARROW LSHIFT RSHIFT XOR BOOL CLASS IF INT  PRINT PARSEINT PUBLIC RETURN STATIC STRING VOID WHILE 
+%token ELSE DOTLENGTH DOUBLE AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ SEMICOLON ARROW LSHIFT RSHIFT XOR BOOL CLASS IF INT  PRINT PARSEINT PUBLIC RETURN STATIC STRING VOID WHILE 
 %token <stringValue> STRLIT INTLIT RESERVED BOOLLIT ID REALLIT
 %type <node> Program DeclMult MethodDecl FieldDecl COMID Type MethodHeader FormalParams COMTYPID MethodBody BODY VarDecl Statement MethodInvocation COMMAExpr Assignment ParseArgs Expr
 
@@ -44,7 +44,7 @@
 Program: CLASS ID LBRACE DeclMult RBRACE          {$$ = root = createNode("Program",NULL,createNode("Id",$2,NULL,$4),NULL);}   
 ;
 
-DeclMult:  DeclMult MethodDecl                    {if($1 == NULL){$$ = $2}else{$2}}//not sure
+DeclMult:  DeclMult MethodDecl                    {;} //not sur
         |  DeclMult FieldDecl                     {;}
         |  DeclMult SEMICOLON                     {;} 
         |                                         {$$ = NULL;}
@@ -54,7 +54,7 @@ MethodDecl: PUBLIC STATIC MethodHeader MethodBody {$$ = createNode("MethodDecl",
 ;
 
 FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {$$ = createNode("FieldDecl",NULL,createNode("Type",NULL,NULL,createNode("Id",$4,NULL,NULL)),$5);}//mandar o tipo para os filhos 
-         | error SEMICOLON                        {;}
+         | error SEMICOLON                        {$$ = NULL;}
 ;
 
 COMID: COMID COMMA ID                             {$$ = createNode("FieldDecl",NULL,createNode(NULL,NULL,NULL,createNode("Id",$3,NULL,NULL)),$1);}
@@ -66,93 +66,94 @@ Type: BOOL                                        {$$ = createNode("Bool",NULL,N
     | DOUBLE                                      {$$ = createNode("Double",NULL,NULL,NULL);}
 ;
 
-MethodHeader: Type ID LPAR FormalParams RPAR      {;}
-            | Type ID LPAR RPAR                   {;}
-            | VOID ID LPAR FormalParams RPAR      {;}
-            | VOID ID LPAR RPAR                   {;}
+MethodHeader: Type ID LPAR FormalParams RPAR      {$$=createNode("Type",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL)));}
+            | Type ID LPAR RPAR                   {$$=createNode("Type",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,NULL,NULL)));}
+            | VOID ID LPAR FormalParams RPAR      {$$=createNode("Void",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL)));}
+            | VOID ID LPAR RPAR                   {$$=createNode("Void",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,NULL,NULL)));}
 ;
 
-FormalParams: Type ID COMTYPID                    {;}
-            | STRING LSQ RSQ ID                   {;}
+FormalParams: Type ID COMTYPID                    {$$=createNode("ParamDecl",NULL,createNode("Type",NULL,NULL,createNode("Id",$2,NULL,NULL)),$3);}
+            | STRING LSQ RSQ ID                   {$$=createNode("ParamDecl",NULL,createNode("StringArray",NULL,NULL,createNode("Id",$4,NULL,NULL)),NULL);}
+            
 ;
 
-COMTYPID: COMTYPID COMMA Type ID                  {;}
-|                                                 {$$= NULL;}
-;
-
-MethodBody: LBRACE BODY RBRACE                    {;}
-        |   LBRACE RBRACE                         {;}
-;
-
-BODY: Statement                                   {;}
-    | VarDecl                                     {;}
-;
-
-VarDecl:Type ID COMID SEMICOLON                   {;}
-;
-
-Statement: LBRACE Statement RBRACE                {;}
-    | LBRACE RBRACE                               {;}
-    | IF LPAR Expr RPAR Statement                 {;}
-    | IF LPAR Expr RPAR Statement ELSE Statement  {;}
-    | WHILE LPAR Expr RPAR Statement              {;}
-    | RETURN SEMICOLON                            {;}
-    | RETURN Expr SEMICOLON                       {;}
-    | MethodInvocation SEMICOLON                  {;}
-    | Assignment SEMICOLON                        {;}
-    | ParseArgs SEMICOLON                         {;}
-    | SEMICOLON                                   {;}
-    | PRINT LPAR Expr RPAR SEMICOLON              {;}
-    | PRINT LPAR STRLIT RPAR SEMICOLON            {;}
-    | error SEMICOLON                             {;}
-    ;
-
-MethodInvocation: ID LPAR RPAR                    {;}
-    | ID LPAR Expr COMMAExpr RPAR                 {;}
-    | ID LPAR error RPAR                          {;}
-    ;
-
-COMMAExpr: COMMAExpr COMMA Expr                   {;}
+COMTYPID: COMTYPID COMMA Type ID                  {$$ = createNode("ParamDecl",NULL,createNode("Type",NULL,NULL,createNode("Id",$4,NULL,NULL)),$1);}
 |                                                 {$$ = NULL;}
 ;
 
-Assignment: ID ASSIGN Expr                        {;}
+MethodBody: LBRACE BODY RBRACE                    {$$=createNode("MethodBody",NULL,$2,NULL);}
 ;
 
-ParseArgs:PARSEINT LPAR ID LSQ Expr RSQ RPAR            {;}
-    |PARSEINT LPAR error RPAR                     {;}
+BODY: BODY Statement                              {;}//atribuir irmao
+    | BODY VarDecl                                {;}
+    |                                             {$$=NULL;}
+;
+
+VarDecl:Type ID COMID SEMICOLON                   {$$ = createNode("VarDecl",NULL,createNode("Type",NULL,NULL,createNode("Id",$2,NULL,NULL)),$3);}//ver como por vardecl sempre, o comid esta com fielddecl e temos de mandar o type para o irmao tambem 
+;
+
+Statement: LBRACE Statement RBRACE                {$$ = $2;}
+    | LBRACE RBRACE                               {$$ = NULL;}
+    | IF LPAR Expr RPAR Statement                 {;}
+    | IF LPAR Expr RPAR Statement ELSE Statement  {;}
+    | WHILE LPAR Expr RPAR Statement              {;}
+    | RETURN SEMICOLON                            {$$ = createNode("Return",NULL,NULL,NULL);}
+    | RETURN Expr SEMICOLON                       {$$ = createNode("Return",NULL,$2,NULL);}
+    | MethodInvocation SEMICOLON                  {$$ = createNode("Call",NULL,$1,NULL);}
+    | Assignment SEMICOLON                        {$$=$1;}
+    | ParseArgs SEMICOLON                         {$$=$1;}
+    | SEMICOLON                                   {$$ = NULL;}
+    | PRINT LPAR Expr RPAR SEMICOLON              {$$=createNode("Print",NULL,$3,NULL);}
+    | PRINT LPAR STRLIT RPAR SEMICOLON            {$$=createNode("Print",NULL,createNode("STRLIT",$3,NULL,NULL),NULL);}
+    | error SEMICOLON                             {$$ = NULL;}
+    ;
+
+MethodInvocation: ID LPAR RPAR                    {$$ = createNode("Id",$1,NULL,NULL);}
+    | ID LPAR Expr COMMAExpr RPAR                 {$$ = createNode("Id",$1,NULL,$3);$3->sibling = $4;}
+    | ID LPAR error RPAR                          {$$=NULL;}
+    ;
+
+COMMAExpr: COMMAExpr COMMA Expr                   {$$=$3; $3->sibling = $1;}//podera ter que se trocar os $
+|                                                 {$$ = NULL;}
+;
+
+Assignment: ID ASSIGN Expr                        {$$=createNode("Assign",NULL,createNode("Id",$1,NULL,$3),NULL);}
+;
+
+ParseArgs:PARSEINT LPAR ID LSQ Expr RSQ RPAR      {$$ = createNode("ParseArgs",NULL,createNode("Id",$3,NULL,$5),NULL);}
+    |PARSEINT LPAR error RPAR                     {$$ = NULL;}
     ;
 
 Expr:
-    Expr OR Expr                                  {;}
-    |Expr XOR Expr                                {;}
-    |Expr LSHIFT Expr                             {;}
-    |Expr RSHIFT Expr                             {;}
-    |Expr AND Expr                                {;} 
-    |Expr LT Expr                                 {;}
-    |Expr GT Expr                                 {;}
-    |Expr EQ Expr                                 {;}
-    |Expr NE Expr                                 {;}
-    |Expr LE Expr                                 {;}
-    |Expr GE Expr                                 {;}
-    |Expr PLUS Expr                               {;}
-    |Expr MINUS Expr                              {;}
-    |Expr STAR Expr                               {;}
-    |Expr DIV Expr                                {;}
-    |Expr MOD Expr                                {;}
-    |NOT Expr        %prec UNARY                  {;}
-    |MINUS Expr      %prec UNARY                  {;}
-    |PLUS Expr       %prec UNARY                  {;}
-    |INTLIT                                       {;}
-    |REALLIT                                      {;}
-    |ID                                           {;}
-    |ID DOTLENGTH                                 {;}
-    |BOOLLIT                                      {;}
-    |LPAR Expr RPAR                               {;}
-    |LPAR error RPAR                              {;}
-    |MethodInvocation                             {;}
-    |Assignment                                   {;}
-    |ParseArgs                                    {;}
+    Expr OR Expr                                  {$$ = createNode("Or",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr XOR Expr                                {$$ = createNode("Xor",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr LSHIFT Expr                             {$$ = createNode("Lshift",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr RSHIFT Expr                             {$$ = createNode("Rshift",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr AND Expr                                {$$ = createNode("And",NULL,$1,NULL);$1->sibling = $3;} 
+    |Expr LT Expr                                 {$$ = createNode("Lt",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr GT Expr                                 {$$ = createNode("Gt",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr EQ Expr                                 {$$ = createNode("Eq",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr NE Expr                                 {$$ = createNode("Ne",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr LE Expr                                 {$$ = createNode("Le",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr GE Expr                                 {$$ = createNode("Ge",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr PLUS Expr                               {$$ = createNode("Plus",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr MINUS Expr                              {$$ = createNode("Minus",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr STAR Expr                               {$$ = createNode("Star",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr DIV Expr                                {$$ = createNode("Div",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr MOD Expr                                {$$ = createNode("Mod",NULL,$1,NULL);$1->sibling = $3;}
+    |NOT Expr        %prec UNARY                  {$$ = createNode("Not",NULL,$2,NULL);}
+    |MINUS Expr      %prec UNARY                  {$$ = createNode("Minus",NULL,$2,NULL);}
+    |PLUS Expr       %prec UNARY                  {$$ = createNode("Plus",NULL,$2,NULL);}
+    |INTLIT                                       {$$ = createNode("Int",$1,NULL,NULL);}
+    |REALLIT                                      {$$ = createNode("RealLit",$1,NULL,NULL);}
+    |ID                                           {$$ = createNode("Id",$1, NULL,NULL);}
+    |ID DOTLENGTH                                 {$$ = createNode("Length",NULL,createNode("Id",$1,NULL,NULL),NULL);}
+    |BOOLLIT                                      {$$ = createNode("BoolLit",$1,NULL,NULL);}
+    |LPAR Expr RPAR                               {$$ = $2;}
+    |MethodInvocation                             {$$ = $1;}
+    |Assignment                                   {$$ = $1;}
+    |ParseArgs                                    {$$ = $1;}
+    |LPAR error RPAR                              {$$ = NULL;}
 
 ;
 

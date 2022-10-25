@@ -8,7 +8,7 @@ Program
 ........ParamDecl
 ..........Int
 ..........Id(n)
-....MethodBody
+....MethodBody 
 ......If
 ........Eq
 ..........Id(n)

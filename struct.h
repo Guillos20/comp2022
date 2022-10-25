@@ -1,18 +1,19 @@
 #ifndef STRUCT_H
 #define STRUCT_H
 
-typedef struct Node{
+typedef struct Node
+{
     char *token;
     char *value;
     char *type;
     struct Node *son;
     struct Node *sibling;
-}Node;
+} Node;
 
 Node *root;
 
 void print_tree(Node *node, int num);
 
-struct node *createNode(char *token, char *value,struct node *son,struct node *sibling);
-
-#endif //STRUCT_H
+Node *createNode(char *token, char *value, Node *son, Node *sibling);
+void print_tree(Node *root, int num);
+#endif // STRUCT_H
