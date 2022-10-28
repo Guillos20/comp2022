@@ -1,6 +1,6 @@
 all:
 	flex jucompiler.l
-	yacc -d jucompiler.y
+	yacc -v -d jucompiler.y
 	clang -o run *.c
 
 	

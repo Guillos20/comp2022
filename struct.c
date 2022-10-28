@@ -22,14 +22,12 @@ void print_tree(Node *node, int num)
     for (int i = 0; i < num; i++){
         printf("..");
     }
-    if (node->value != NULL)
-    {
-        printf("%s(%s)\n", node->token, node->value);
-    }
-    else
-    {
+    if (node->value != NULL){
+        printf("%s(%s)\n", node->token, node->value);    
+        }else{
+            
         printf("%s\n", node->token);
-    }
+        }
 
     if (node->son != NULL)
     {
