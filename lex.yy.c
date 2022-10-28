@@ -382,43 +382,43 @@ struct yy_trans_info
 static const flex_int16_t yy_accept[356] =
     {   0,
         0,    0,   14,   14,    0,    0,    0,    0,   66,   63,
-       61,   62,   62,   36,    8,   60,   34,   63,   30,   41,
+       60,   62,   62,   36,    8,   61,   34,   63,   30,   41,
        22,   39,   23,   33,   63,   24,   17,   17,   43,   32,
-       21,   27,   60,   60,   31,   42,   47,   60,   60,   60,
-       60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   60,   60,   28,   63,   40,   13,   11,   11,    9,
+       21,   27,   61,   61,   31,   42,   47,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   28,   63,   40,   13,   11,   11,    9,
        12,    4,    3,    3,    4,    7,    6,    6,   62,   35,
-       60,   60,   20,   19,   44,   64,    0,    1,    5,   64,
+       61,   61,   20,   19,   44,   64,    0,    1,    5,   64,
         0,    0,    0,   17,    0,   45,   29,   25,   26,   46,
-       60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
 
-       60,   60,   60,   19,   60,   60,   60,   60,   60,   60,
-       60,   60,   50,   60,   60,   60,   60,   60,   60,   60,
-       60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   60,   38,   14,   10,    0,   11,   12,    3,    2,
+       61,   61,   61,   19,   61,   61,   61,   61,   61,   61,
+       61,   61,   50,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   38,   14,   10,    0,   11,   12,    3,    2,
         6,   64,    0,    0,    0,   64,    0,    0,   64,    0,
-       17,   60,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   60,   19,   60,   60,   60,   51,   60,   60,   60,
-       60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   60,   60,   60,   60,   60,   60,   60,    0,   64,
+       17,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   19,   61,   61,   61,   51,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,    0,   64,
 
-       64,    0,   64,    0,    0,   64,   64,    0,   60,   60,
-       60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   15,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   60,   60,   60,   37,   58,   60,   60,   64,    0,
-        0,   64,   64,    0,   64,   60,   60,   60,   60,   60,
-       60,   49,   60,   60,   60,   60,   19,   60,   60,   60,
-       60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
-       60,   19,   60,   60,   59,   64,    0,   64,   60,   57,
-       19,   60,   60,   60,   60,   18,   60,   60,   60,   60,
+       64,    0,   64,    0,    0,   64,   64,    0,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   15,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   37,   58,   61,   61,   64,    0,
+        0,   64,   64,    0,   64,   61,   61,   61,   61,   61,
+       61,   49,   61,   61,   61,   61,   19,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   19,   61,   61,   59,   64,    0,   64,   61,   57,
+       19,   61,   61,   61,   61,   18,   61,   61,   61,   61,
 
-       60,   60,   60,   60,   54,   55,   56,   60,   60,   60,
-       60,   16,   19,    0,   60,   48,   60,   60,   60,   60,
-       60,   60,   60,   60,   60,    0,    0,   60,   60,   60,
-       60,   60,   60,    0,    0,   60,   60,   60,    0,    0,
-       60,    0,    0,   60,    0,    0,    0,    0,    0,    0,
+       61,   61,   61,   61,   54,   55,   56,   61,   61,   61,
+       61,   16,   19,    0,   61,   48,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,    0,    0,   61,   61,   61,
+       61,   61,   61,    0,    0,   61,   61,   61,    0,    0,
+       61,    0,    0,   61,    0,    0,    0,    0,    0,    0,
         0,    0,   53,   52,    0
     } ;
 
@@ -1246,7 +1246,7 @@ YY_RULE_SETUP
 case 17:
 YY_RULE_SETUP
 #line 114 "jucompiler.l"
-{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("INTLIT(%s)\n",yytext);}else  {yylval.stringValue = strdup(yytext);return INTLIT;};}
+{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("INTLIT(%s)\n",yytext);}else  {char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return INTLIT;};}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
@@ -1256,7 +1256,7 @@ YY_RULE_SETUP
 case 19:
 YY_RULE_SETUP
 #line 116 "jucompiler.l"
-{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("RESERVED(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext);return RESERVED;};}
+{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("RESERVED(%s)\n",yytext);}else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return RESERVED;};}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
@@ -1346,7 +1346,7 @@ YY_RULE_SETUP
 case 37:
 YY_RULE_SETUP
 #line 134 "jucompiler.l"
-{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);} else {yylval.stringValue = strdup(yytext); return BOOLLIT;};}
+{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);} else {char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext); return BOOLLIT;};}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
@@ -1461,12 +1461,12 @@ YY_RULE_SETUP
 case 60:
 YY_RULE_SETUP
 #line 157 "jucompiler.l"
-{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("ID(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext); return ID;};}
+{coluna += yyleng;col_yacc = coluna;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
 #line 158 "jucompiler.l"
-{coluna += yyleng;col_yacc = coluna;}
+{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("ID(%s)\n",yytext);}else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext); return ID;};}
 	YY_BREAK
 case 62:
 /* rule 62 can match eol */
@@ -1477,12 +1477,12 @@ YY_RULE_SETUP
 case 63:
 YY_RULE_SETUP
 #line 160 "jucompiler.l"
-{printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext); coluna += yyleng;}
+{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext);}}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
 #line 161 "jucompiler.l"
-{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("REALLIT(%s)\n",yytext);} else{yylval.stringValue = strdup(yytext);return REALLIT;};}
+{coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("REALLIT(%s)\n",yytext);} else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return REALLIT;};}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
@@ -2533,12 +2533,12 @@ int main(int argc, char** argv){
     }
     return 0;
 }
-    void yyerror(char* s){
-    printf("Line %d, col %d: %s: %s\n", yylineno, col_yacc, s, yytext);
-}
+   
 
 
 int yywrap(){
     return 1;
 }
-
+ void yyerror(char* s){
+    printf("Line %d, col %d: %s: %s\n", yylineno, col_yacc, s, yytext);
+}

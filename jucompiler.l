@@ -111,9 +111,9 @@ illseq          \\[^fnrt\\\"\r\n]?
 
 {else}            {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("ELSE\n");}else return ELSE;}
 {dotlength}       {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("DOTLENGTH\n");}else return DOTLENGTH;}
-{intlit}          {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("INTLIT(%s)\n",yytext);}else  {yylval.stringValue = strdup(yytext);return INTLIT;};}
+{intlit}          {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("INTLIT(%s)\n",yytext);}else  {char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return INTLIT;};}
 {double}          {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("DOUBLE\n");}else return DOUBLE;}
-{reserved}        {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("RESERVED(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext);return RESERVED;};}
+{reserved}        {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("RESERVED(%s)\n",yytext);}else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return RESERVED;};}
 {and}             {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("AND\n");}else return AND;}
 {assign}          {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("ASSIGN\n");}else return ASSIGN;}
 {star}            {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("STAR\n");}else return STAR;}
@@ -131,7 +131,7 @@ illseq          \\[^fnrt\\\"\r\n]?
 {mod}             {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("MOD\n");}else return MOD;}
 {ne}              {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("NE\n");}else return NE;}
 {not}             {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("NOT\n");}else return NOT;}
-{boollit}         {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);} else {yylval.stringValue = strdup(yytext); return BOOLLIT;};}
+{boollit}         {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("BOOLLIT(%s)\n",yytext);} else {char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext); return BOOLLIT;};}
 {or}              {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("OR\n");}else return OR;}
 {plus}            {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("PLUS\n");}else return PLUS;}
 {rbrace}          {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("RBRACE\n");}else return RBRACE;}
@@ -154,11 +154,11 @@ illseq          \\[^fnrt\\\"\r\n]?
 {string}          {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("STRING\n");}else return STRING;}
 {void}            {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("VOID\n");}else return VOID;}
 {while}           {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("WHILE\n");}else return WHILE;}
-{id}              {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("ID(%s)\n",yytext);}else{yylval.stringValue = strdup(yytext); return ID;};}
 {whitespace}      {coluna += yyleng;col_yacc = coluna;}
+{id}              {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("ID(%s)\n",yytext);}else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext); return ID;};}
 \n|\r\n|\r        {coluna = 1;linha += 1;col_yacc = coluna;}
-.                 {printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext); coluna += yyleng;}
-{reallit}         {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("REALLIT(%s)\n",yytext);} else{yylval.stringValue = strdup(yytext);return REALLIT;};}
+.                 {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext);}}
+{reallit}         {coluna += yyleng;col_yacc = coluna;if(fc == 1){printf("REALLIT(%s)\n",yytext);} else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return REALLIT;};}
 
 %%
 
@@ -185,11 +185,12 @@ int main(int argc, char** argv){
     }
     return 0;
 }
-    void yyerror(char* s){
-    printf("Line %d, col %d: %s: %s\n", yylineno, col_yacc, s, yytext);
-}
+   
 
 
 int yywrap(){
     return 1;
+}
+ void yyerror(char* s){
+    printf("Line %d, col %d: %s: %s\n", yylineno, col_yacc, s, yytext);
 }

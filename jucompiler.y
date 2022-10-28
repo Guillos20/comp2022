@@ -1,5 +1,6 @@
 %{
-    //./gocompiler $flag < $path/$2.dgo $sort | diff $path/$2.out - -y
+    //./jucompiler $flag < $path/$2.java $sort | diff $path/$2.out - -y
+    //./yeet -t para verificares todos os testescasos da pasta
     #include <stdbool.h>
     #include <stdio.h>
     #include <stdlib.h>
@@ -66,36 +67,36 @@ Type: BOOL                                        {$$ = createNode("Bool",NULL,N
     | DOUBLE                                      {$$ = createNode("Double",NULL,NULL,NULL);}
 ;
 
-MethodHeader: Type ID LPAR FormalParams RPAR      {$$=$1;$1->sibling = createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL));} //fix type issue
-            | Type ID LPAR RPAR                   {$$=$1;$1->sibling = createNode("Id",$2,NULL,createNode("MethodParams",NULL,$1,NULL));  }
-            | VOID ID LPAR FormalParams RPAR      {$$=createNode("Void",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL)));}
-            | VOID ID LPAR RPAR                   {$$=createNode("Void",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,NULL,NULL)));}
+MethodHeader: Type ID LPAR FormalParams RPAR      {$$ = $1;$1->sibling = createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL));} //fix type issue
+            | Type ID LPAR RPAR                   {$$ = $1;$1->sibling = createNode("Id",$2,NULL,createNode("MethodParams",NULL,NULL,NULL));}
+            | VOID ID LPAR FormalParams RPAR      {$$ = createNode("Void",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL)));}
+            | VOID ID LPAR RPAR                   {$$ = createNode("Void",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,NULL,NULL)));}
 ;
 
-FormalParams: Type ID COMTYPID                    {$$=createNode("ParamDecl",NULL,$1,$3);Node *id =createNode("Id",$2,NULL,NULL); $1->sibling=id;}
-            | STRING LSQ RSQ ID                   {Node *id = createNode("Id", $4, NULL,NULL); $$=createNode("ParamDecl",NULL,createNode("StringArray",NULL,NULL,id),NULL);}
+FormalParams: Type ID COMTYPID                    {$$ = createNode("ParamDecl",NULL,$1,$3);Node *id =createNode("Id",$2,NULL,NULL); $1->sibling=id;}
+            | STRING LSQ RSQ ID                   {Node *id = createNode("Id", $4, NULL,NULL); $$ = createNode("ParamDecl",NULL,createNode("StringArray",NULL,NULL,id),NULL);}
             
 ;
 
-COMTYPID:  COMMA Type ID COMTYPID                 {$$=createNode("ParamDecl",NULL,$2,$4);Node *id =createNode("Id",$3,NULL,NULL); $2->sibling=id;}
+COMTYPID:  COMMA Type ID COMTYPID                 {$$ = createNode("ParamDecl",NULL,$2,$4);Node *id =createNode("Id",$3,NULL,NULL); $2->sibling=id;}
 |                                                 {$$ = NULL;}
 ;
 
-MethodBody: LBRACE BODY RBRACE                    {$$=$2;}
+MethodBody: LBRACE BODY RBRACE                    {$$ = $2;}
 ;
 
 BODY:Statement BODY                               {$$ = $1; $1->sibling = $2;}
     | VarDecl BODY                                {$$ = $1; $1->sibling = $2;}
-    |                                             {$$=NULL;}
+    |                                             {$$ = NULL;}
 ;
 
-VarDecl:Type ID COMID SEMICOLON                   {$$ =createNode("VarDecl",NULL,$1,$3);Node *id = createNode("Id",$2,NULL,NULL); $1->sibling=id;}//ver como por vardecl sempre, o comid esta com fielddecl e temos de mandar o type para o irmao tambem 
+VarDecl:Type ID COMID SEMICOLON                   {$$ = createNode("VarDecl",NULL,$1,$3);Node *id = createNode("Id",$2,NULL,NULL); $1->sibling=id;}//ver como por vardecl sempre, o comid esta com fielddecl e temos de mandar o type para o irmao tambem 
 ;
 
-Statement: LBRACE Statement RBRACE                {$$ = $2;}
-    | LBRACE RBRACE                               {$$ = NULL;}
+Statement: LBRACE Statement RBRACE                {if($2 != NULL){Node * block  = createNode("Block", NULL,$2,NULL);$$ = block;}
+                                                    else{$$ = NULL;}}
     | IF LPAR Expr RPAR Statement                 {$$ = createNode("If",NULL, $3, NULL); Node *block=createNode("Block",NULL,$5, NULL); $3->sibling = block;}// perguntar ao stor sobre os blocks 
-    | IF LPAR Expr RPAR Statement ELSE Statement  {$$ = createNode("If",NULL, $3, NULL); $3->sibling = $5;$3->sibling = $7;}
+    | IF LPAR Expr RPAR Statement ELSE Statement  {$$ = createNode("If",NULL, $3, NULL); Node *ifblock=createNode("Block",NULL,$5, NULL); $3->sibling = ifblock;Node *elseblock=createNode("Block",NULL,$5, NULL); ifblock->sibling = elseblock;}
     | WHILE LPAR Expr RPAR Statement              {$$ = createNode("While",NULL, $3, NULL);$3->sibling = $5;}
     | RETURN SEMICOLON                            {$$ = createNode("Return",NULL,NULL,NULL);}
     | RETURN Expr SEMICOLON                       {$$ = createNode("Return",NULL,$2,NULL);}
@@ -110,14 +111,14 @@ Statement: LBRACE Statement RBRACE                {$$ = $2;}
 
 MethodInvocation: ID LPAR RPAR                    {$$ = createNode("Id",$1,NULL,NULL);}
     | ID LPAR Expr COMMAExpr RPAR                 {$$ = createNode("Id",$1,NULL,$3);$3->sibling = $4;} //this still needs work cuz is not calling the calls
-    | ID LPAR error RPAR                          {$$=NULL;}
+    | ID LPAR error RPAR                          {$$ = NULL;}
     ;
 
-COMMAExpr: COMMA Expr COMMAExpr                   {$$=$2; $2->sibling = $3;}//podera ter que se trocar os $
+COMMAExpr: COMMA Expr COMMAExpr                   {$$ = $2; $2->sibling = $3;}//podera ter que se trocar os $
 |                                                 {$$ = NULL;}
 ;
 
-Assignment: ID ASSIGN Expr                        {$$=createNode("Assign",NULL,createNode("Id",$1,NULL,$3),NULL);}
+Assignment: ID ASSIGN Expr                        {$$ = createNode("Assign",NULL,createNode("Id",$1,NULL,$3),NULL);}
 ;
 
 ParseArgs:PARSEINT LPAR ID LSQ Expr RSQ RPAR      {$$ = createNode("ParseArgs",NULL,createNode("Id",$3,NULL,$5),NULL);}
