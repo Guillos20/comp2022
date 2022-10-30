@@ -4,6 +4,9 @@ if [ "$1" = "-l" ]; then
 elif [ "$1" = "-t" ]; then
     path=meta2
     flag="$1"
+elif [ "$1" = "-e2" ]; then
+    path=meta2_errors
+    flag="$1"
 elif [ "$1" = "-s" ]; then
     path=meta3
     flag="-s"
@@ -38,6 +41,7 @@ for input in $path/*.java; do
     if [ $? -eq 0 ]; then
         echo "✅ PASSED $filename.java"
     else
-        echo "❌ FAILED $filename.java"
+        echo "❌ FAILED $filename.java "
+        echo "./run $flag < $filename.java | diff $filename.out - -y -t"
     fi
 done

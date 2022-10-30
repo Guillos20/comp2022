@@ -1,7 +1,0 @@
-STRLIT("jnjksdkjnded")
-INTLIT(1)
-STRLIT("cdjhb  dhh a")
-Line 1, col 32: illegal character (.)
-STRLIT("rrrr")
-INTLIT(2)
-Line 1, col 45: invalid escape sequence (\u)

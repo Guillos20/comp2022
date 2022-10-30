@@ -1,7 +1,0 @@
-STRLIT("")
-STRLIT("\\")
-STRLIT("\"")
-STRLIT("This is a string")
-STRLIT("This is a ")
-PLUS
-Line 8, col 20: invalid escape sequence (\g)

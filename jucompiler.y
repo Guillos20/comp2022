@@ -20,7 +20,7 @@
 
 %token ELSE DOTLENGTH DOUBLE AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ SEMICOLON ARROW LSHIFT RSHIFT XOR BOOL CLASS IF INT  PRINT PARSEINT PUBLIC RETURN STATIC STRING VOID WHILE 
 %token <stringValue> STRLIT INTLIT RESERVED BOOLLIT ID REALLIT
-%type <node> Program DeclMult MethodDecl FieldDecl COMID Type MethodHeader FormalParams COMTYPID MethodBody BODY VarDecl COMIDVAR Statement StatementHelper MethodInvocation COMMAExpr Assignment ParseArgs Expr
+%type <node> Program DeclMult MethodDecl FieldDecl COMID Type MethodHeader FormalParams COMTYPID MethodBody BODY VarDecl COMIDVAR Statement StatementHelper MethodInvocation COMMAExpr Assignment ParseArgs Expr ExprHelper
 
 %left ARROW
 %left COMMA
@@ -44,8 +44,8 @@
 Program: CLASS ID LBRACE DeclMult RBRACE          {$$ = root = createNode("Program",NULL,createNode("Id",$2,NULL,$4),NULL);}   
 ;
 
-DeclMult:  MethodDecl DeclMult                    {$$ = $1; if($2 != NULL){$1->sibling = $2;};} //not sur
-        |  FieldDecl  DeclMult                    {$$ = $1; if($2 != NULL){$1->sibling = $2;};}
+DeclMult:  MethodDecl DeclMult                    {if($1 != NULL){$$ = $1; if($2 != NULL){$1->sibling = $2;};}else{$$=NULL;};} //not sur
+        |  FieldDecl  DeclMult                    {if($1 != NULL){$$ = $1; if($2 != NULL){$1->sibling = $2;};}else{$$=NULL;};}
         |  SEMICOLON  DeclMult                    {if($2 != NULL){$$ = $2;}else{$$=NULL;};} 
         |                                         {$$ = NULL;}
         ;
@@ -129,8 +129,7 @@ ParseArgs:PARSEINT LPAR ID LSQ Expr RSQ RPAR      {$$ = createNode("ParseArgs",N
     |PARSEINT LPAR error RPAR                     {$$ = NULL;}
     ;
 
-Expr:
-    Expr OR Expr                                  {$$ = createNode("Or",NULL,$1,NULL);$1->sibling = $3;}
+Expr:Expr OR Expr                                 {$$ = createNode("Or",NULL,$1,NULL);$1->sibling = $3;}
     |Expr XOR Expr                                {$$ = createNode("Xor",NULL,$1,NULL);$1->sibling = $3;}
     |Expr LSHIFT Expr                             {$$ = createNode("Lshift",NULL,$1,NULL);$1->sibling = $3;}
     |Expr RSHIFT Expr                             {$$ = createNode("Rshift",NULL,$1,NULL);$1->sibling = $3;}
@@ -154,12 +153,15 @@ Expr:
     |ID                                           {$$ = createNode("Id",$1, NULL,NULL);}
     |ID DOTLENGTH                                 {$$ = createNode("Length",NULL,createNode("Id",$1,NULL,NULL),NULL);}
     |BOOLLIT                                      {$$ = createNode("BoolLit",$1,NULL,NULL);}
-    |LPAR Expr RPAR                               {$$ = $2;}
+    |LPAR ExprHelper RPAR                         {$$ = $2;}
     |MethodInvocation                             {$$ = $1;}
-    |Assignment                                   {$$ = $1;}
     |ParseArgs                                    {$$ = $1;}
     |LPAR error RPAR                              {$$ = NULL;}
 
+;
+ExprHelper: 
+    Assignment                                   {$$ = $1;}    
+    |Expr                                        {$$ = $1;}
 ;
 
 %%
