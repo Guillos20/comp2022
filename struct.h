@@ -5,7 +5,6 @@ typedef struct Node
 {
     char *token;
     char *value;
-    char *type;
     struct Node *son;
     struct Node *sibling;
 } Node;

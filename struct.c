@@ -6,17 +6,16 @@
 Node *createNode(char *token, char *value, Node *son, Node *sibling)
 {
     Node *n = (Node *)malloc(sizeof(Node));
-    n->son = son;
-    n->sibling = sibling;
     n->token = token;
     n->value = value;
-
+    n->son = son;
+    n->sibling = sibling;
     return n;
 }
 
 void print_tree(Node *node, int num)
 {
-    if (root == NULL){
+    if (node == NULL){
         return;
     }
     for (int i = 0; i < num; i++){
