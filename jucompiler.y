@@ -96,37 +96,37 @@ COMIDVAR:COMMA ID COMIDVAR                        {$$ = createNode("VarDecl",NUL
 
 ;
 
-Statement: LBRACE StatementHelper RBRACE          {$$ = $2;}//if($2 != NULL){Node * block  = createNode("Block", NULL,$2,NULL);$$ = block;} statement is no bueno else{$$ = $2;}
-    | IF LPAR Expr RPAR Statement                 {$$ = createNode("If",NULL, $3, NULL); $3->sibling = $5;}// Node *block=createNode("Block",NULL,$5, NULL); perguntar ao stor sobre os blocks 
-    | IF LPAR Expr RPAR Statement ELSE Statement  {$$ = createNode("If",NULL, $3, NULL);$3->sibling=$5; $3->sibling= $7;} //Node *ifblock=createNode("Block",NULL,$5, NULL); $3->sibling = ifblock;Node *elseblock=createNode("Block",NULL,$5, NULL); ifblock->sibling = elseblock;
-    | WHILE LPAR Expr RPAR Statement              {$$ = createNode("While",NULL, $3, NULL) ;if($5 != NULL){$3->sibling = $5;}}
-    | RETURN SEMICOLON                            {$$ = createNode("Return",NULL,NULL,NULL);}
-    | RETURN Expr SEMICOLON                       {$$ = createNode("Return",NULL,$2,NULL);}
-    | MethodInvocation SEMICOLON                  {$$ = createNode("Call",NULL,$1,NULL);}
-    | Assignment SEMICOLON                        {$$ = $1;}
-    | ParseArgs SEMICOLON                         {$$ = $1;}
-    | SEMICOLON                                   {$$ = NULL;}   //criar estado auxiliar maybe i wanna kommit die
-    | PRINT LPAR Expr RPAR SEMICOLON              {$$ = createNode("Print",NULL,$3,NULL);}
-    | PRINT LPAR STRLIT RPAR SEMICOLON            {$$ = createNode("Print",NULL,createNode("StrLit",$3,NULL,NULL),NULL);}
-    | error SEMICOLON                             {$$ = NULL;}
+Statement: LBRACE StatementHelper RBRACE                {$$ = $2;}//if($2 != NULL){Node * block  = createNode("Block", NULL,$2,NULL);$$ = block;} statement is no bueno else{$$ = $2;}
+    | IF LPAR ExprHelper RPAR Statement                 {$$ = createNode("If",NULL, $3, NULL); $3->sibling = $5;}// Node *block=createNode("Block",NULL,$5, NULL); perguntar ao stor sobre os blocks 
+    | IF LPAR ExprHelper RPAR Statement ELSE Statement  {$$ = createNode("If",NULL, $3, NULL);$3->sibling=$5; $3->sibling= $7;} //Node *ifblock=createNode("Block",NULL,$5, NULL); $3->sibling = ifblock;Node *elseblock=createNode("Block",NULL,$5, NULL); ifblock->sibling = elseblock;
+    | WHILE LPAR ExprHelper RPAR Statement              {$$ = createNode("While",NULL, $3, NULL) ;if($5 != NULL){$3->sibling = $5;}}
+    | RETURN SEMICOLON                                  {$$ = createNode("Return",NULL,NULL,NULL);}
+    | RETURN ExprHelper SEMICOLON                       {$$ = createNode("Return",NULL,$2,NULL);}
+    | MethodInvocation SEMICOLON                        {$$ = $1;}
+    | Assignment SEMICOLON                              {$$ = $1;}
+    | ParseArgs SEMICOLON                               {$$ = $1;}
+    | SEMICOLON                                         {$$ = NULL;}   //criar estado auxiliar maybe i wanna kommit die
+    | PRINT LPAR ExprHelper RPAR SEMICOLON              {$$ = createNode("Print",NULL,$3,NULL);}
+    | PRINT LPAR STRLIT RPAR SEMICOLON                  {$$ = createNode("Print",NULL,createNode("StrLit",$3,NULL,NULL),NULL);}
+    | error SEMICOLON                                   {$$ = NULL;}
     ;
-StatementHelper:StatementHelper Statement         {$$ = $2;}
-|                                                 {$$ = NULL;}
+StatementHelper:StatementHelper Statement               {$$ = $2;}
+|                                                       {$$ = NULL;}
 ;
-MethodInvocation: ID LPAR RPAR                    {$$ = createNode("Id",$1,NULL,NULL);}
-    | ID LPAR Expr COMMAExpr RPAR                 {$$ = createNode("Id",$1,NULL,$3);$3->sibling = $4;} //this still needs work cuz is not calling the calls
-    | ID LPAR error RPAR                          {$$ = NULL;}
+MethodInvocation: ID LPAR RPAR                          {Node *id = createNode("Id",$1,NULL,NULL); $$ = createNode("Call",NULL,id, NULL); }
+    | ID LPAR ExprHelper COMMAExpr RPAR                 {Node *id = createNode("Id",$1,NULL,$3);$3->sibling = $4;$$ = createNode("Call",NULL,id, NULL);} //this still needs work cuz is not calling the calls
+    | ID LPAR error RPAR                                {$$ = NULL;}
     ;
 
-COMMAExpr: COMMA Expr COMMAExpr                   {$$ = $2; $2->sibling = $3;}//podera ter que se trocar os $
-|                                                 {$$ = NULL;}
+COMMAExpr: COMMA ExprHelper COMMAExpr                   {$$ = $2; $2->sibling = $3;}//podera ter que se trocar os $
+|                                                       {$$ = NULL;}
 ;
 
-Assignment: ID ASSIGN Expr                        {$$ = createNode("Assign",NULL,createNode("Id",$1,NULL,$3),NULL);}
+Assignment: ID ASSIGN ExprHelper                        {$$ = createNode("Assign",NULL,createNode("Id",$1,NULL,$3),NULL);}
 ;
 
-ParseArgs:PARSEINT LPAR ID LSQ Expr RSQ RPAR      {$$ = createNode("ParseArgs",NULL,createNode("Id",$3,NULL,$5),NULL);}
-    |PARSEINT LPAR error RPAR                     {$$ = NULL;}
+ParseArgs:PARSEINT LPAR ID LSQ ExprHelper RSQ RPAR      {$$ = createNode("ParseArgs",NULL,createNode("Id",$3,NULL,$5),NULL);}
+    |PARSEINT LPAR error RPAR                           {$$ = NULL;}
     ;
 
 Expr:Expr OR Expr                                 {$$ = createNode("Or",NULL,$1,NULL);$1->sibling = $3;}
@@ -145,9 +145,9 @@ Expr:Expr OR Expr                                 {$$ = createNode("Or",NULL,$1,
     |Expr STAR Expr                               {$$ = createNode("Mul",NULL,$1,NULL);$1->sibling = $3;}
     |Expr DIV Expr                                {$$ = createNode("Div",NULL,$1,NULL);$1->sibling = $3;}
     |Expr MOD Expr                                {$$ = createNode("Mod",NULL,$1,NULL);$1->sibling = $3;}
-    |NOT Expr        %prec UNARY                  {$$ = createNode("Not",NULL,$2,NULL);}
-    |MINUS Expr      %prec UNARY                  {$$ = createNode("Minus",NULL,$2,NULL);}
-    |PLUS Expr       %prec UNARY                  {$$ = createNode("Plus",NULL,$2,NULL);}
+    |NOT Expr              %prec UNARY            {$$ = createNode("Not",NULL,$2,NULL);}
+    |MINUS Expr            %prec UNARY            {$$ = createNode("Minus",NULL,$2,NULL);}
+    |PLUS Expr             %prec UNARY            {$$ = createNode("Plus",NULL,$2,NULL);}
     |INTLIT                                       {$$ = createNode("DecLit",$1,NULL,NULL);}
     |REALLIT                                      {$$ = createNode("RealLit",$1,NULL,NULL);}
     |ID                                           {$$ = createNode("Id",$1, NULL,NULL);}

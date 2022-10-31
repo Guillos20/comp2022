@@ -16,6 +16,7 @@
     int fc = 0;
     bool ignoreSTR = false;
     int col_yacc = 1;
+    int error = 0;
 
       
 %}
@@ -36,7 +37,7 @@ intlit          [0-9]|{intdigits}
 reallit         {realdigits}"."({realdigits}?{exp}?)|{realdigits}{exp}|"."{realdigits}{exp}?
 strlit          ([^\n\r"\\]|\\n|\\f|\\r|\\\\|\\\"|\\t)*
 whitespace      (" "|\t|\f)
-
+newline         \n|\r\n|\r  
 
 reserved        "abstract"|"continue"|"for"|"new"|"switch"|"assert"|"default"|"package"|"synchronized"|"do"|"goto"|"private"|"this"|"break"|"implements"|"protected"|"throw"|"byte"|"import"|"throws"|"case"|"enum"|"instanceof"|"transient"|"catch"|"extends"|"short"|"try"|"char"|"final"|"interface"|"finally"|"long"|"strictfp"|"volatile"|"const"|"float"|"native"|"super"|"--"|"++"|"Integer"|"System"|"null"
 boollit         "true"|"false"
@@ -85,24 +86,25 @@ while           "while"
 illseq          \\[^fnrt\\\"\r\n]?
 
 
+
 %%
 
 
 "/*"               {svPoint = coluna; svLine = linha;col_yacc = coluna; coluna += yyleng;BEGIN COM1;} 
 <COM1>"*/"         {col_yacc = coluna;coluna += yyleng;BEGIN 0;}
-<COM1>\n|\r\n|\r   {col_yacc = coluna;linha+=1;coluna = 1;}
+<COM1>{newline}    {col_yacc = coluna;linha+=1;coluna = 1;}
 <COM1><<EOF>>      {printf("Line %d, col %d: unterminated comment\n",svLine,svPoint);BEGIN 0;}
 <COM1>.            {col_yacc = coluna;coluna += yyleng;}
 
 "//"               {BEGIN COM2;} 
-<COM2>\n|\r\n|\r   {col_yacc = coluna;linha +=1;coluna =1;BEGIN 0;}
+<COM2>{newline}    {col_yacc = coluna;linha +=1;coluna =1;BEGIN 0;}
 <COM2>.            {col_yacc = coluna;coluna += yyleng;}
 
 
 \"                 {BEGIN STR;svPoint = coluna;col_yacc = svPoint; coluna += yyleng;ignoreSTR = false;}
-<STR>\"            {BEGIN 0; coluna += yyleng;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}else if(fc == 3 && ignoreSTR == false){char* str = malloc(yyleng+2);sprintf(str, "\"%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return STRLIT;}}
-<STR>{strlit}\"    {BEGIN 0; coluna += yyleng;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}else if(fc == 3 && ignoreSTR == false){char* str = malloc(yyleng+2);sprintf(str, "\"%s", yytext); yytext = str; yylval.stringValue =  strdup(yytext);return STRLIT;}} //chekar isto do yyval, provavel tem de ter as condicoes do argumento da command line  
-<STR>\n|\r|\r\n    {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha +=1; coluna = 1; col_yacc =svPoint; BEGIN 0;}
+<STR>\"            {BEGIN 0; coluna += yyleng;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}else if(fc == 3 && ignoreSTR == false){char* str = malloc(yyleng+2);strcat(str, "\"");strcat(str, yytext); yytext = str;yylval.stringValue =  strdup(yytext);return STRLIT;}}
+<STR>{strlit}\"    {BEGIN 0; coluna += yyleng;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}else if(fc == 3 && ignoreSTR == false){char* str = malloc(yyleng+2);strcat(str, "\"");strcat(str, yytext); yytext = str;yylval.stringValue =  strdup(yytext);return STRLIT;}} //chekar isto do yyval, provavel tem de ter as condicoes do argumento da command line  
+<STR>{newline}     {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha++; coluna = 1; col_yacc = svPoint; BEGIN 0;}
 <STR>{illseq}      {printf("Line %d, col %d: invalid escape sequence (%s)\n",linha,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;BEGIN 0;}                  
 <STR><<EOF>>       {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint);coluna = 1;col_yacc = svPoint;BEGIN 0;}
 <STR>.             {coluna += yyleng;}
@@ -155,7 +157,7 @@ illseq          \\[^fnrt\\\"\r\n]?
 {intlit}          {col_yacc = coluna;coluna += yyleng;if(fc == 1){printf("INTLIT(%s)\n",yytext);}else  {char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return INTLIT;};}
 {reserved}        {col_yacc = coluna;coluna += yyleng;if(fc == 1){printf("RESERVED(%s)\n",yytext);}else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return RESERVED;};}
 {id}              {col_yacc = coluna;coluna += yyleng;if(fc == 1){printf("ID(%s)\n",yytext);}else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext); return ID;};}
-\n|\r\n|\r        {col_yacc = coluna;coluna = 1;linha += 1;}
+{newline}         {col_yacc = coluna;coluna = 1;linha += 1;}
 .                 {col_yacc = coluna;{printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext);}coluna += 1;}
 {reallit}         {col_yacc = coluna;coluna += yyleng;if(fc == 1){printf("REALLIT(%s)\n",yytext);} else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return REALLIT;};}
 <<EOF>>           {col_yacc = coluna;yyterminate();}
@@ -175,16 +177,20 @@ int main(int argc, char** argv){
         if(strcmp(argv[i], "-t") == 0){
             fc = 3;
             yyparse();
-            print_tree(root, 0);                   
+            if(!error){
+            print_tree(root, 0);
+            }                   
         }
          if(strcmp(argv[i], "-e2") == 0){
             fc = 3;
-            yyparse();                 
+            yyparse(); 
+            yylex();                
         }
     }
     return 0;
 }
  void yyerror(char* s){
+    error = 1;
     printf("Line %d, col %d: %s: %s\n", yylineno, col_yacc, s, yytext);
 }
 int yywrap(){
