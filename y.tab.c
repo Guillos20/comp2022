@@ -1625,7 +1625,7 @@ yyreduce:
 
   case 10:
 #line 60 "jucompiler.y"
-                                                  {(yyval.node) = createNode("FieldDecl",NULL,NULL,(yyvsp[0].node));}
+                                                  {(yyval.node) = createNode("FieldDecl",NULL,createNode("Id", (yyvsp[-1].stringValue), NULL, NULL),(yyvsp[0].node));}
 #line 1630 "y.tab.c"
     break;
 
@@ -1757,7 +1757,7 @@ yyreduce:
 
   case 32:
 #line 101 "jucompiler.y"
-                                                        {(yyval.node) = createNode("If",NULL, (yyvsp[-4].node), NULL);(yyvsp[-4].node)->sibling=(yyvsp[-2].node); (yyvsp[-4].node)->sibling= (yyvsp[0].node);}
+                                                        {(yyval.node) = createNode("If",NULL, (yyvsp[-4].node), NULL);(yyvsp[-4].node)->sibling=(yyvsp[-2].node);}
 #line 1762 "y.tab.c"
     break;
 
@@ -1823,7 +1823,7 @@ yyreduce:
 
   case 43:
 #line 113 "jucompiler.y"
-                                                        {(yyval.node) = (yyvsp[0].node);}
+                                                        {if((yyvsp[0].node) ==NULL){(yyval.node) = (yyvsp[-1].node);}else{(yyval.node) = (yyvsp[0].node);}}
 #line 1828 "y.tab.c"
     break;
 

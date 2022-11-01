@@ -1212,16 +1212,16 @@ case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
 #line 107 "jucompiler.l"
-{printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha++; coluna = 1; col_yacc = svPoint; BEGIN 0;}
+{BEGIN 0;printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha++; coluna = 1; col_yacc = svPoint;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 108 "jucompiler.l"
-{printf("Line %d, col %d: invalid escape sequence (%s)\n",linha,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;BEGIN 0;}                  
+{BEGIN 0;printf("Line %d, col %d: invalid escape sequence (%s)\n",yylineno,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;}                  
 	YY_BREAK
 case YY_STATE_EOF(STR):
 #line 109 "jucompiler.l"
-{printf("Line %d, col %d: unterminated string literal\n",linha,svPoint);coluna = 1;col_yacc = svPoint;BEGIN 0;}
+{BEGIN 0;printf("Line %d, col %d: unterminated string literal\n",yylineno,svPoint);coluna = 1;col_yacc = svPoint;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
@@ -1477,7 +1477,7 @@ YY_RULE_SETUP
 case 63:
 YY_RULE_SETUP
 #line 161 "jucompiler.l"
-{col_yacc = coluna;{printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext);}coluna += 1;}
+{col_yacc = coluna;{printf("Line %d, col %d: illegal character (%s)\n",yylineno,coluna,yytext);}coluna += 1;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
@@ -2540,7 +2540,7 @@ int main(int argc, char** argv){
 }
  void yyerror(char* s){
     error = 1;
-    printf("Line %d, col %d: %s: %s\n", yylineno, col_yacc, s, yytext);
+    printf("Line %d, col %d: %s: %s\n", linha, col_yacc, s, yytext);
 }
 int yywrap(){
     return 1;

@@ -104,9 +104,9 @@ illseq          \\[^fnrt\\\"\r\n]?
 \"                 {BEGIN STR;svPoint = coluna;col_yacc = svPoint; coluna += yyleng;ignoreSTR = false;}
 <STR>\"            {BEGIN 0; coluna += yyleng;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}else if(fc == 3 && ignoreSTR == false){char* str = malloc(yyleng+2);strcat(str, "\"");strcat(str, yytext); yytext = str;yylval.stringValue =  strdup(yytext);return STRLIT;}}
 <STR>{strlit}\"    {BEGIN 0; coluna += yyleng;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}else if(fc == 3 && ignoreSTR == false){char* str = malloc(yyleng+2);strcat(str, "\"");strcat(str, yytext); yytext = str;yylval.stringValue =  strdup(yytext);return STRLIT;}} //chekar isto do yyval, provavel tem de ter as condicoes do argumento da command line  
-<STR>{newline}     {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha++; coluna = 1; col_yacc = svPoint; BEGIN 0;}
-<STR>{illseq}      {printf("Line %d, col %d: invalid escape sequence (%s)\n",linha,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;BEGIN 0;}                  
-<STR><<EOF>>       {printf("Line %d, col %d: unterminated string literal\n",linha,svPoint);coluna = 1;col_yacc = svPoint;BEGIN 0;}
+<STR>{newline}     {BEGIN 0;printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha++; coluna = 1; col_yacc = svPoint;}
+<STR>{illseq}      {BEGIN 0;printf("Line %d, col %d: invalid escape sequence (%s)\n",yylineno,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;}                  
+<STR><<EOF>>       {BEGIN 0;printf("Line %d, col %d: unterminated string literal\n",yylineno,svPoint);coluna = 1;col_yacc = svPoint;}
 <STR>.             {coluna += yyleng;}
 <STR>{strlit}      {coluna += yyleng;}
 
@@ -158,7 +158,7 @@ illseq          \\[^fnrt\\\"\r\n]?
 {reserved}        {col_yacc = coluna;coluna += yyleng;if(fc == 1){printf("RESERVED(%s)\n",yytext);}else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return RESERVED;};}
 {id}              {col_yacc = coluna;coluna += yyleng;if(fc == 1){printf("ID(%s)\n",yytext);}else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext); return ID;};}
 {newline}         {col_yacc = coluna;coluna = 1;linha += 1;}
-.                 {col_yacc = coluna;{printf("Line %d, col %d: illegal character (%s)\n",linha,coluna,yytext);}coluna += 1;}
+.                 {col_yacc = coluna;{printf("Line %d, col %d: illegal character (%s)\n",yylineno,coluna,yytext);}coluna += 1;}
 {reallit}         {col_yacc = coluna;coluna += yyleng;if(fc == 1){printf("REALLIT(%s)\n",yytext);} else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return REALLIT;};}
 <<EOF>>           {col_yacc = coluna;yyterminate();}
 %%
@@ -191,7 +191,7 @@ int main(int argc, char** argv){
 }
  void yyerror(char* s){
     error = 1;
-    printf("Line %d, col %d: %s: %s\n", yylineno, col_yacc, s, yytext);
+    printf("Line %d, col %d: %s: %s\n", linha, col_yacc, s, yytext);
 }
 int yywrap(){
     return 1;
