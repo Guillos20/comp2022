@@ -105,7 +105,7 @@ illseq          \\[^fnrt\\\"\r\n]?
 <STR>\"            {BEGIN 0; coluna += yyleng;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}else if(fc == 3 && ignoreSTR == false){char* str = malloc(yyleng+2);strcat(str, "\"");strcat(str, yytext); yytext = str;yylval.stringValue =  strdup(yytext);return STRLIT;}}
 <STR>{strlit}\"    {BEGIN 0; coluna += yyleng;if(fc == 1 && ignoreSTR == false){printf("STRLIT(\"%s)\n",yytext);}else if(fc == 3 && ignoreSTR == false){char* str = malloc(yyleng+2);strcat(str, "\"");strcat(str, yytext); yytext = str;yylval.stringValue =  strdup(yytext);return STRLIT;}} //chekar isto do yyval, provavel tem de ter as condicoes do argumento da command line  
 <STR>{newline}     {BEGIN 0;printf("Line %d, col %d: unterminated string literal\n",linha,svPoint); linha++; coluna = 1; col_yacc = svPoint;}
-<STR>{illseq}      {BEGIN 0;printf("Line %d, col %d: invalid escape sequence (%s)\n",yylineno,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;}                  
+<STR>{illseq}      {BEGIN STR;printf("Line %d, col %d: invalid escape sequence (%s)\n",yylineno,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;}                  
 <STR><<EOF>>       {BEGIN 0;printf("Line %d, col %d: unterminated string literal\n",yylineno,svPoint);coluna = 1;col_yacc = svPoint;}
 <STR>.             {coluna += yyleng;}
 <STR>{strlit}      {coluna += yyleng;}

@@ -96,9 +96,9 @@ COMIDVAR:COMMA ID COMIDVAR                        {$$ = createNode("VarDecl",NUL
 
 ;
 
-Statement: LBRACE StatementHelper RBRACE                {$$ = $2;}//if($2 != NULL){Node * block  = createNode("Block", NULL,$2,NULL);$$ = block;} statement is no bueno else{$$ = $2;}
-    | IF LPAR ExprHelper RPAR Statement                 {$$ = createNode("If",NULL, $3, NULL); $3->sibling = $5;}// Node *block=createNode("Block",NULL,$5, NULL); perguntar ao stor sobre os blocks 
-    | IF LPAR ExprHelper RPAR Statement ELSE Statement  {$$ = createNode("If",NULL, $3, NULL);$3->sibling=$5;} //Node *ifblock=createNode("Block",NULL,$5, NULL); $3->sibling = ifblock;Node *elseblock=createNode("Block",NULL,$5, NULL); ifblock->sibling = elseblock;
+Statement: LBRACE StatementHelper RBRACE                {$$ = createNode("Block", NULL,$2,NULL);}//if($2 != NULL){Node * block  = $$ = block;} else{$$ = $2;}statement is no bueno 
+    | IF LPAR ExprHelper RPAR Statement                 {$$ = createNode("If",NULL, $3, NULL); Node *block=createNode("Block",NULL,$5, createNode("Block",NULL,NULL, NULL));$3->sibling = block;}// this almost done .perguntar ao stor sobre os blocks 
+    | IF LPAR ExprHelper RPAR Statement ELSE Statement  {$$ = createNode("If",NULL, $3, NULL);Node *elseblock=createNode("Block",NULL,$5, NULL); $3->sibling = elseblock; elseblock->sibling=$7;} //Node *ifblock=createNode("Block",NULL,$5, NULL); $3->sibling = ifblock;Node *elseblock=createNode("Block",NULL,$5, NULL); ifblock->sibling = elseblock;
     | WHILE LPAR ExprHelper RPAR Statement              {$$ = createNode("While",NULL, $3, NULL) ;if($5 != NULL){$3->sibling = $5;}}
     | RETURN SEMICOLON                                  {$$ = createNode("Return",NULL,NULL,NULL);}
     | RETURN ExprHelper SEMICOLON                       {$$ = createNode("Return",NULL,$2,NULL);}
@@ -110,8 +110,8 @@ Statement: LBRACE StatementHelper RBRACE                {$$ = $2;}//if($2 != NUL
     | PRINT LPAR STRLIT RPAR SEMICOLON                  {$$ = createNode("Print",NULL,createNode("StrLit",$3,NULL,NULL),NULL);}
     | error SEMICOLON                                   {$$ = NULL;}
     ;
-StatementHelper:StatementHelper Statement               {if($2 ==NULL){$$ = $1;}else{$$ = $2;}}
-|                                                       {$$ = NULL;}
+StatementHelper:Statement StatementHelper               {if($1 ==NULL){$$ = $2;}else if($2==NULL){$$ = $1;}else{$$=$1;$1->sibling=$2;}}
+    |                                                   {$$ = NULL;}
 ;
 MethodInvocation: ID LPAR RPAR                          {Node *id = createNode("Id",$1,NULL,NULL); $$ = createNode("Call",NULL,id, NULL); }
     | ID LPAR ExprHelper COMMAExpr RPAR                 {Node *id = createNode("Id",$1,NULL,$3);$3->sibling = $4;$$ = createNode("Call",NULL,id, NULL);} //this still needs work cuz is not calling the calls

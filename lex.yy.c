@@ -1217,7 +1217,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 108 "jucompiler.l"
-{BEGIN 0;printf("Line %d, col %d: invalid escape sequence (%s)\n",yylineno,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;}                  
+{BEGIN STR;printf("Line %d, col %d: invalid escape sequence (%s)\n",yylineno,coluna,yytext); col_yacc = coluna;coluna += yyleng; ignoreSTR = true;}                  
 	YY_BREAK
 case YY_STATE_EOF(STR):
 #line 109 "jucompiler.l"
@@ -2535,6 +2535,7 @@ int main(int argc, char** argv){
             yyparse(); 
             yylex();                
         }
+       
     }
     return 0;
 }

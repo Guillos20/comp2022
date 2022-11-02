@@ -63,7 +63,7 @@ Grammar
    40          | PRINT LPAR STRLIT RPAR SEMICOLON
    41          | error SEMICOLON
 
-   42 StatementHelper: StatementHelper Statement
+   42 StatementHelper: Statement StatementHelper
    43                | %empty
 
    44 MethodInvocation: ID LPAR RPAR
@@ -562,9 +562,23 @@ State 33
 
    29 Statement: LBRACE . StatementHelper RBRACE
 
-    $default  reduce using rule 43 (StatementHelper)
+    error      shift, and go to state 32
+    LBRACE     shift, and go to state 33
+    SEMICOLON  shift, and go to state 34
+    IF         shift, and go to state 35
+    PRINT      shift, and go to state 36
+    PARSEINT   shift, and go to state 37
+    RETURN     shift, and go to state 38
+    WHILE      shift, and go to state 39
+    ID         shift, and go to state 40
 
-    StatementHelper  go to state 57
+    RBRACE  reduce using rule 43 (StatementHelper)
+
+    Statement         go to state 57
+    StatementHelper   go to state 58
+    MethodInvocation  go to state 45
+    Assignment        go to state 46
+    ParseArgs         go to state 47
 
 
 State 34
@@ -579,7 +593,7 @@ State 35
    30 Statement: IF . LPAR ExprHelper RPAR Statement
    31          | IF . LPAR ExprHelper RPAR Statement ELSE Statement
 
-    LPAR  shift, and go to state 58
+    LPAR  shift, and go to state 59
 
 
 State 36
@@ -587,7 +601,7 @@ State 36
    39 Statement: PRINT . LPAR ExprHelper RPAR SEMICOLON
    40          | PRINT . LPAR STRLIT RPAR SEMICOLON
 
-    LPAR  shift, and go to state 59
+    LPAR  shift, and go to state 60
 
 
 State 37
@@ -595,7 +609,7 @@ State 37
    50 ParseArgs: PARSEINT . LPAR ID LSQ ExprHelper RSQ RPAR
    51          | PARSEINT . LPAR error RPAR
 
-    LPAR  shift, and go to state 60
+    LPAR  shift, and go to state 61
 
 
 State 38
@@ -603,29 +617,29 @@ State 38
    33 Statement: RETURN . SEMICOLON
    34          | RETURN . ExprHelper SEMICOLON
 
-    LPAR       shift, and go to state 61
-    MINUS      shift, and go to state 62
-    NOT        shift, and go to state 63
-    PLUS       shift, and go to state 64
-    SEMICOLON  shift, and go to state 65
+    LPAR       shift, and go to state 62
+    MINUS      shift, and go to state 63
+    NOT        shift, and go to state 64
+    PLUS       shift, and go to state 65
+    SEMICOLON  shift, and go to state 66
     PARSEINT   shift, and go to state 37
-    INTLIT     shift, and go to state 66
-    BOOLLIT    shift, and go to state 67
-    ID         shift, and go to state 68
-    REALLIT    shift, and go to state 69
+    INTLIT     shift, and go to state 67
+    BOOLLIT    shift, and go to state 68
+    ID         shift, and go to state 69
+    REALLIT    shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
-    ExprHelper        go to state 74
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
+    ExprHelper        go to state 75
 
 
 State 39
 
    32 Statement: WHILE . LPAR ExprHelper RPAR Statement
 
-    LPAR  shift, and go to state 75
+    LPAR  shift, and go to state 76
 
 
 State 40
@@ -635,22 +649,22 @@ State 40
    46                 | ID . LPAR error RPAR
    49 Assignment: ID . ASSIGN ExprHelper
 
-    ASSIGN  shift, and go to state 76
-    LPAR    shift, and go to state 77
+    ASSIGN  shift, and go to state 77
+    LPAR    shift, and go to state 78
 
 
 State 41
 
    26 VarDecl: Type . ID COMIDVAR SEMICOLON
 
-    ID  shift, and go to state 78
+    ID  shift, and go to state 79
 
 
 State 42
 
    22 MethodBody: LBRACE BODY . RBRACE
 
-    RBRACE  shift, and go to state 79
+    RBRACE  shift, and go to state 80
 
 
 State 43
@@ -673,7 +687,7 @@ State 43
     RBRACE  reduce using rule 25 (BODY)
 
     Type              go to state 41
-    BODY              go to state 80
+    BODY              go to state 81
     VarDecl           go to state 43
     Statement         go to state 44
     MethodInvocation  go to state 45
@@ -701,7 +715,7 @@ State 44
     RBRACE  reduce using rule 25 (BODY)
 
     Type              go to state 41
-    BODY              go to state 81
+    BODY              go to state 82
     VarDecl           go to state 43
     Statement         go to state 44
     MethodInvocation  go to state 45
@@ -713,21 +727,21 @@ State 45
 
    35 Statement: MethodInvocation . SEMICOLON
 
-    SEMICOLON  shift, and go to state 82
+    SEMICOLON  shift, and go to state 83
 
 
 State 46
 
    36 Statement: Assignment . SEMICOLON
 
-    SEMICOLON  shift, and go to state 83
+    SEMICOLON  shift, and go to state 84
 
 
 State 47
 
    37 Statement: ParseArgs . SEMICOLON
 
-    SEMICOLON  shift, and go to state 84
+    SEMICOLON  shift, and go to state 85
 
 
 State 48
@@ -741,21 +755,21 @@ State 49
 
    19 FormalParams: STRING . LSQ RSQ ID
 
-    LSQ  shift, and go to state 85
+    LSQ  shift, and go to state 86
 
 
 State 50
 
    18 FormalParams: Type . ID COMTYPID
 
-    ID  shift, and go to state 86
+    ID  shift, and go to state 87
 
 
 State 51
 
    16 MethodHeader: VOID ID LPAR FormalParams . RPAR
 
-    RPAR  shift, and go to state 87
+    RPAR  shift, and go to state 88
 
 
 State 52
@@ -766,7 +780,7 @@ State 52
 
     $default  reduce using rule 10 (COMID)
 
-    COMID  go to state 88
+    COMID  go to state 89
 
 
 State 53
@@ -780,7 +794,7 @@ State 54
 
    14 MethodHeader: Type ID LPAR FormalParams . RPAR
 
-    RPAR  shift, and go to state 89
+    RPAR  shift, and go to state 90
 
 
 State 55
@@ -799,12 +813,10 @@ State 56
 
 State 57
 
-   29 Statement: LBRACE StatementHelper . RBRACE
-   42 StatementHelper: StatementHelper . Statement
+   42 StatementHelper: Statement . StatementHelper
 
     error      shift, and go to state 32
     LBRACE     shift, and go to state 33
-    RBRACE     shift, and go to state 90
     SEMICOLON  shift, and go to state 34
     IF         shift, and go to state 35
     PRINT      shift, and go to state 36
@@ -813,7 +825,10 @@ State 57
     WHILE      shift, and go to state 39
     ID         shift, and go to state 40
 
-    Statement         go to state 91
+    RBRACE  reduce using rule 43 (StatementHelper)
+
+    Statement         go to state 57
+    StatementHelper   go to state 91
     MethodInvocation  go to state 45
     Assignment        go to state 46
     ParseArgs         go to state 47
@@ -821,160 +836,167 @@ State 57
 
 State 58
 
-   30 Statement: IF LPAR . ExprHelper RPAR Statement
-   31          | IF LPAR . ExprHelper RPAR Statement ELSE Statement
+   29 Statement: LBRACE StatementHelper . RBRACE
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
-    PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 68
-    REALLIT   shift, and go to state 69
-
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
-    ExprHelper        go to state 92
+    RBRACE  shift, and go to state 92
 
 
 State 59
 
-   39 Statement: PRINT LPAR . ExprHelper RPAR SEMICOLON
-   40          | PRINT LPAR . STRLIT RPAR SEMICOLON
+   30 Statement: IF LPAR . ExprHelper RPAR Statement
+   31          | IF LPAR . ExprHelper RPAR Statement ELSE Statement
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    STRLIT    shift, and go to state 93
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 68
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 69
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
-    ExprHelper        go to state 94
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
+    ExprHelper        go to state 93
 
 
 State 60
 
-   50 ParseArgs: PARSEINT LPAR . ID LSQ ExprHelper RSQ RPAR
-   51          | PARSEINT LPAR . error RPAR
+   39 Statement: PRINT LPAR . ExprHelper RPAR SEMICOLON
+   40          | PRINT LPAR . STRLIT RPAR SEMICOLON
 
-    error  shift, and go to state 95
-    ID     shift, and go to state 96
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
+    PARSEINT  shift, and go to state 37
+    STRLIT    shift, and go to state 94
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 69
+    REALLIT   shift, and go to state 70
+
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
+    ExprHelper        go to state 95
 
 
 State 61
 
-   76 Expr: LPAR . ExprHelper RPAR
-   79     | LPAR . error RPAR
+   50 ParseArgs: PARSEINT LPAR . ID LSQ ExprHelper RSQ RPAR
+   51          | PARSEINT LPAR . error RPAR
 
-    error     shift, and go to state 97
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
-    PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 68
-    REALLIT   shift, and go to state 69
-
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
-    ExprHelper        go to state 98
+    error  shift, and go to state 96
+    ID     shift, and go to state 97
 
 
 State 62
 
-   69 Expr: MINUS . Expr
+   76 Expr: LPAR . ExprHelper RPAR
+   79     | LPAR . error RPAR
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    error     shift, and go to state 98
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 69
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
-    Expr              go to state 100
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
+    ExprHelper        go to state 99
 
 
 State 63
 
-   68 Expr: NOT . Expr
+   69 Expr: MINUS . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 101
 
 
 State 64
 
-   70 Expr: PLUS . Expr
+   68 Expr: NOT . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 102
 
 
 State 65
+
+   70 Expr: PLUS . Expr
+
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
+    PARSEINT  shift, and go to state 37
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
+
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
+    Expr              go to state 103
+
+
+State 66
 
    33 Statement: RETURN SEMICOLON .
 
     $default  reduce using rule 33 (Statement)
 
 
-State 66
+State 67
 
    71 Expr: INTLIT .
 
     $default  reduce using rule 71 (Expr)
 
 
-State 67
+State 68
 
    75 Expr: BOOLLIT .
 
     $default  reduce using rule 75 (Expr)
 
 
-State 68
+State 69
 
    44 MethodInvocation: ID . LPAR RPAR
    45                 | ID . LPAR ExprHelper COMMAExpr RPAR
@@ -983,42 +1005,42 @@ State 68
    73 Expr: ID .
    74     | ID . DOTLENGTH
 
-    DOTLENGTH  shift, and go to state 103
-    ASSIGN     shift, and go to state 76
-    LPAR       shift, and go to state 77
+    DOTLENGTH  shift, and go to state 104
+    ASSIGN     shift, and go to state 77
+    LPAR       shift, and go to state 78
 
     $default  reduce using rule 73 (Expr)
 
 
-State 69
+State 70
 
    72 Expr: REALLIT .
 
     $default  reduce using rule 72 (Expr)
 
 
-State 70
+State 71
 
    77 Expr: MethodInvocation .
 
     $default  reduce using rule 77 (Expr)
 
 
-State 71
+State 72
 
    80 ExprHelper: Assignment .
 
     $default  reduce using rule 80 (ExprHelper)
 
 
-State 72
+State 73
 
    78 Expr: ParseArgs .
 
     $default  reduce using rule 78 (Expr)
 
 
-State 73
+State 74
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1038,257 +1060,257 @@ State 73
    67     | Expr . MOD Expr
    81 ExprHelper: Expr .
 
-    AND     shift, and go to state 104
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    EQ      shift, and go to state 107
-    GE      shift, and go to state 108
-    GT      shift, and go to state 109
-    LE      shift, and go to state 110
-    LT      shift, and go to state 111
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    NE      shift, and go to state 114
-    OR      shift, and go to state 115
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
-    XOR     shift, and go to state 119
+    AND     shift, and go to state 105
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    EQ      shift, and go to state 108
+    GE      shift, and go to state 109
+    GT      shift, and go to state 110
+    LE      shift, and go to state 111
+    LT      shift, and go to state 112
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    NE      shift, and go to state 115
+    OR      shift, and go to state 116
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
+    XOR     shift, and go to state 120
 
     $default  reduce using rule 81 (ExprHelper)
 
 
-State 74
+State 75
 
    34 Statement: RETURN ExprHelper . SEMICOLON
 
-    SEMICOLON  shift, and go to state 120
-
-
-State 75
-
-   32 Statement: WHILE LPAR . ExprHelper RPAR Statement
-
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
-    PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 68
-    REALLIT   shift, and go to state 69
-
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
-    ExprHelper        go to state 121
+    SEMICOLON  shift, and go to state 121
 
 
 State 76
 
-   49 Assignment: ID ASSIGN . ExprHelper
+   32 Statement: WHILE LPAR . ExprHelper RPAR Statement
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 68
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 69
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
     ExprHelper        go to state 122
 
 
 State 77
 
-   44 MethodInvocation: ID LPAR . RPAR
-   45                 | ID LPAR . ExprHelper COMMAExpr RPAR
-   46                 | ID LPAR . error RPAR
+   49 Assignment: ID ASSIGN . ExprHelper
 
-    error     shift, and go to state 123
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
-    RPAR      shift, and go to state 124
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 68
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 69
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
-    ExprHelper        go to state 125
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
+    ExprHelper        go to state 123
 
 
 State 78
 
-   26 VarDecl: Type ID . COMIDVAR SEMICOLON
+   44 MethodInvocation: ID LPAR . RPAR
+   45                 | ID LPAR . ExprHelper COMMAExpr RPAR
+   46                 | ID LPAR . error RPAR
 
-    COMMA  shift, and go to state 126
+    error     shift, and go to state 124
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
+    RPAR      shift, and go to state 125
+    PARSEINT  shift, and go to state 37
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 69
+    REALLIT   shift, and go to state 70
 
-    $default  reduce using rule 28 (COMIDVAR)
-
-    COMIDVAR  go to state 127
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
+    ExprHelper        go to state 126
 
 
 State 79
+
+   26 VarDecl: Type ID . COMIDVAR SEMICOLON
+
+    COMMA  shift, and go to state 127
+
+    $default  reduce using rule 28 (COMIDVAR)
+
+    COMIDVAR  go to state 128
+
+
+State 80
 
    22 MethodBody: LBRACE BODY RBRACE .
 
     $default  reduce using rule 22 (MethodBody)
 
 
-State 80
+State 81
 
    24 BODY: VarDecl BODY .
 
     $default  reduce using rule 24 (BODY)
 
 
-State 81
+State 82
 
    23 BODY: Statement BODY .
 
     $default  reduce using rule 23 (BODY)
 
 
-State 82
+State 83
 
    35 Statement: MethodInvocation SEMICOLON .
 
     $default  reduce using rule 35 (Statement)
 
 
-State 83
+State 84
 
    36 Statement: Assignment SEMICOLON .
 
     $default  reduce using rule 36 (Statement)
 
 
-State 84
+State 85
 
    37 Statement: ParseArgs SEMICOLON .
 
     $default  reduce using rule 37 (Statement)
 
 
-State 85
+State 86
 
    19 FormalParams: STRING LSQ . RSQ ID
 
-    RSQ  shift, and go to state 128
-
-
-State 86
-
-   18 FormalParams: Type ID . COMTYPID
-
-    COMMA  shift, and go to state 129
-
-    $default  reduce using rule 21 (COMTYPID)
-
-    COMTYPID  go to state 130
+    RSQ  shift, and go to state 129
 
 
 State 87
+
+   18 FormalParams: Type ID . COMTYPID
+
+    COMMA  shift, and go to state 130
+
+    $default  reduce using rule 21 (COMTYPID)
+
+    COMTYPID  go to state 131
+
+
+State 88
 
    16 MethodHeader: VOID ID LPAR FormalParams RPAR .
 
     $default  reduce using rule 16 (MethodHeader)
 
 
-State 88
+State 89
 
     9 COMID: COMMA ID COMID .
 
     $default  reduce using rule 9 (COMID)
 
 
-State 89
+State 90
 
    14 MethodHeader: Type ID LPAR FormalParams RPAR .
 
     $default  reduce using rule 14 (MethodHeader)
 
 
-State 90
-
-   29 Statement: LBRACE StatementHelper RBRACE .
-
-    $default  reduce using rule 29 (Statement)
-
-
 State 91
 
-   42 StatementHelper: StatementHelper Statement .
+   42 StatementHelper: Statement StatementHelper .
 
     $default  reduce using rule 42 (StatementHelper)
 
 
 State 92
 
-   30 Statement: IF LPAR ExprHelper . RPAR Statement
-   31          | IF LPAR ExprHelper . RPAR Statement ELSE Statement
+   29 Statement: LBRACE StatementHelper RBRACE .
 
-    RPAR  shift, and go to state 131
+    $default  reduce using rule 29 (Statement)
 
 
 State 93
 
-   40 Statement: PRINT LPAR STRLIT . RPAR SEMICOLON
+   30 Statement: IF LPAR ExprHelper . RPAR Statement
+   31          | IF LPAR ExprHelper . RPAR Statement ELSE Statement
 
     RPAR  shift, and go to state 132
 
 
 State 94
 
-   39 Statement: PRINT LPAR ExprHelper . RPAR SEMICOLON
+   40 Statement: PRINT LPAR STRLIT . RPAR SEMICOLON
 
     RPAR  shift, and go to state 133
 
 
 State 95
 
-   51 ParseArgs: PARSEINT LPAR error . RPAR
+   39 Statement: PRINT LPAR ExprHelper . RPAR SEMICOLON
 
     RPAR  shift, and go to state 134
 
 
 State 96
 
-   50 ParseArgs: PARSEINT LPAR ID . LSQ ExprHelper RSQ RPAR
+   51 ParseArgs: PARSEINT LPAR error . RPAR
 
-    LSQ  shift, and go to state 135
+    RPAR  shift, and go to state 135
 
 
 State 97
 
-   79 Expr: LPAR error . RPAR
+   50 ParseArgs: PARSEINT LPAR ID . LSQ ExprHelper RSQ RPAR
 
-    RPAR  shift, and go to state 136
+    LSQ  shift, and go to state 136
 
 
 State 98
 
-   76 Expr: LPAR ExprHelper . RPAR
+   79 Expr: LPAR error . RPAR
 
     RPAR  shift, and go to state 137
 
 
 State 99
+
+   76 Expr: LPAR ExprHelper . RPAR
+
+    RPAR  shift, and go to state 138
+
+
+State 100
 
    44 MethodInvocation: ID . LPAR RPAR
    45                 | ID . LPAR ExprHelper COMMAExpr RPAR
@@ -1296,13 +1318,13 @@ State 99
    73 Expr: ID .
    74     | ID . DOTLENGTH
 
-    DOTLENGTH  shift, and go to state 103
-    LPAR       shift, and go to state 77
+    DOTLENGTH  shift, and go to state 104
+    LPAR       shift, and go to state 78
 
     $default  reduce using rule 73 (Expr)
 
 
-State 100
+State 101
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1325,7 +1347,7 @@ State 100
     $default  reduce using rule 69 (Expr)
 
 
-State 101
+State 102
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1348,7 +1370,7 @@ State 101
     $default  reduce using rule 68 (Expr)
 
 
-State 102
+State 103
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1371,385 +1393,385 @@ State 102
     $default  reduce using rule 70 (Expr)
 
 
-State 103
+State 104
 
    74 Expr: ID DOTLENGTH .
 
     $default  reduce using rule 74 (Expr)
 
 
-State 104
+State 105
 
    56 Expr: Expr AND . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
-    Expr              go to state 138
-
-
-State 105
-
-   65 Expr: Expr STAR . Expr
-
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
-    PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
-
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 139
 
 
 State 106
 
-   66 Expr: Expr DIV . Expr
+   65 Expr: Expr STAR . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 140
 
 
 State 107
 
-   59 Expr: Expr EQ . Expr
+   66 Expr: Expr DIV . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 141
 
 
 State 108
 
-   62 Expr: Expr GE . Expr
+   59 Expr: Expr EQ . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 142
 
 
 State 109
 
-   58 Expr: Expr GT . Expr
+   62 Expr: Expr GE . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 143
 
 
 State 110
 
-   61 Expr: Expr LE . Expr
+   58 Expr: Expr GT . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 144
 
 
 State 111
 
-   57 Expr: Expr LT . Expr
+   61 Expr: Expr LE . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 145
 
 
 State 112
 
-   64 Expr: Expr MINUS . Expr
+   57 Expr: Expr LT . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 146
 
 
 State 113
 
-   67 Expr: Expr MOD . Expr
+   64 Expr: Expr MINUS . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 147
 
 
 State 114
 
-   60 Expr: Expr NE . Expr
+   67 Expr: Expr MOD . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 148
 
 
 State 115
 
-   52 Expr: Expr OR . Expr
+   60 Expr: Expr NE . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 149
 
 
 State 116
 
-   63 Expr: Expr PLUS . Expr
+   52 Expr: Expr OR . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 150
 
 
 State 117
 
-   54 Expr: Expr LSHIFT . Expr
+   63 Expr: Expr PLUS . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 151
 
 
 State 118
 
-   55 Expr: Expr RSHIFT . Expr
+   54 Expr: Expr LSHIFT . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 152
 
 
 State 119
 
-   53 Expr: Expr XOR . Expr
+   55 Expr: Expr RSHIFT . Expr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 99
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    ParseArgs         go to state 72
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
     Expr              go to state 153
 
 
 State 120
+
+   53 Expr: Expr XOR . Expr
+
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
+    PARSEINT  shift, and go to state 37
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 100
+    REALLIT   shift, and go to state 70
+
+    MethodInvocation  go to state 71
+    ParseArgs         go to state 73
+    Expr              go to state 154
+
+
+State 121
 
    34 Statement: RETURN ExprHelper SEMICOLON .
 
     $default  reduce using rule 34 (Statement)
 
 
-State 121
+State 122
 
    32 Statement: WHILE LPAR ExprHelper . RPAR Statement
 
-    RPAR  shift, and go to state 154
+    RPAR  shift, and go to state 155
 
 
-State 122
+State 123
 
    49 Assignment: ID ASSIGN ExprHelper .
 
     $default  reduce using rule 49 (Assignment)
 
 
-State 123
+State 124
 
    46 MethodInvocation: ID LPAR error . RPAR
 
-    RPAR  shift, and go to state 155
+    RPAR  shift, and go to state 156
 
 
-State 124
+State 125
 
    44 MethodInvocation: ID LPAR RPAR .
 
     $default  reduce using rule 44 (MethodInvocation)
 
 
-State 125
+State 126
 
    45 MethodInvocation: ID LPAR ExprHelper . COMMAExpr RPAR
 
-    COMMA  shift, and go to state 156
+    COMMA  shift, and go to state 157
 
     $default  reduce using rule 48 (COMMAExpr)
 
-    COMMAExpr  go to state 157
-
-
-State 126
-
-   27 COMIDVAR: COMMA . ID COMIDVAR
-
-    ID  shift, and go to state 158
+    COMMAExpr  go to state 158
 
 
 State 127
 
-   26 VarDecl: Type ID COMIDVAR . SEMICOLON
+   27 COMIDVAR: COMMA . ID COMIDVAR
 
-    SEMICOLON  shift, and go to state 159
+    ID  shift, and go to state 159
 
 
 State 128
 
-   19 FormalParams: STRING LSQ RSQ . ID
+   26 VarDecl: Type ID COMIDVAR . SEMICOLON
 
-    ID  shift, and go to state 160
+    SEMICOLON  shift, and go to state 160
 
 
 State 129
+
+   19 FormalParams: STRING LSQ RSQ . ID
+
+    ID  shift, and go to state 161
+
+
+State 130
 
    20 COMTYPID: COMMA . Type ID COMTYPID
 
@@ -1757,17 +1779,17 @@ State 129
     BOOL    shift, and go to state 19
     INT     shift, and go to state 20
 
-    Type  go to state 161
+    Type  go to state 162
 
 
-State 130
+State 131
 
    18 FormalParams: Type ID COMTYPID .
 
     $default  reduce using rule 18 (FormalParams)
 
 
-State 131
+State 132
 
    30 Statement: IF LPAR ExprHelper RPAR . Statement
    31          | IF LPAR ExprHelper RPAR . Statement ELSE Statement
@@ -1782,69 +1804,69 @@ State 131
     WHILE      shift, and go to state 39
     ID         shift, and go to state 40
 
-    Statement         go to state 162
+    Statement         go to state 163
     MethodInvocation  go to state 45
     Assignment        go to state 46
     ParseArgs         go to state 47
 
 
-State 132
-
-   40 Statement: PRINT LPAR STRLIT RPAR . SEMICOLON
-
-    SEMICOLON  shift, and go to state 163
-
-
 State 133
 
-   39 Statement: PRINT LPAR ExprHelper RPAR . SEMICOLON
+   40 Statement: PRINT LPAR STRLIT RPAR . SEMICOLON
 
     SEMICOLON  shift, and go to state 164
 
 
 State 134
 
+   39 Statement: PRINT LPAR ExprHelper RPAR . SEMICOLON
+
+    SEMICOLON  shift, and go to state 165
+
+
+State 135
+
    51 ParseArgs: PARSEINT LPAR error RPAR .
 
     $default  reduce using rule 51 (ParseArgs)
 
 
-State 135
+State 136
 
    50 ParseArgs: PARSEINT LPAR ID LSQ . ExprHelper RSQ RPAR
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 68
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 69
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
-    ExprHelper        go to state 165
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
+    ExprHelper        go to state 166
 
 
-State 136
+State 137
 
    79 Expr: LPAR error RPAR .
 
     $default  reduce using rule 79 (Expr)
 
 
-State 137
+State 138
 
    76 Expr: LPAR ExprHelper RPAR .
 
     $default  reduce using rule 76 (Expr)
 
 
-State 138
+State 139
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1864,25 +1886,25 @@ State 138
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    EQ      shift, and go to state 107
-    GE      shift, and go to state 108
-    GT      shift, and go to state 109
-    LE      shift, and go to state 110
-    LT      shift, and go to state 111
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    NE      shift, and go to state 114
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
-    XOR     shift, and go to state 119
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    EQ      shift, and go to state 108
+    GE      shift, and go to state 109
+    GT      shift, and go to state 110
+    LE      shift, and go to state 111
+    LT      shift, and go to state 112
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    NE      shift, and go to state 115
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
+    XOR     shift, and go to state 120
 
     $default  reduce using rule 56 (Expr)
 
 
-State 139
+State 140
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1905,7 +1927,7 @@ State 139
     $default  reduce using rule 65 (Expr)
 
 
-State 140
+State 141
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1928,7 +1950,7 @@ State 140
     $default  reduce using rule 66 (Expr)
 
 
-State 141
+State 142
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1948,22 +1970,22 @@ State 141
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    GE      shift, and go to state 108
-    GT      shift, and go to state 109
-    LE      shift, and go to state 110
-    LT      shift, and go to state 111
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    GE      shift, and go to state 109
+    GT      shift, and go to state 110
+    LE      shift, and go to state 111
+    LT      shift, and go to state 112
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
 
     $default  reduce using rule 59 (Expr)
 
 
-State 142
+State 143
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -1983,18 +2005,18 @@ State 142
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
 
     $default  reduce using rule 62 (Expr)
 
 
-State 143
+State 144
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2014,18 +2036,18 @@ State 143
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
 
     $default  reduce using rule 58 (Expr)
 
 
-State 144
+State 145
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2045,18 +2067,18 @@ State 144
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
 
     $default  reduce using rule 61 (Expr)
 
 
-State 145
+State 146
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2076,18 +2098,18 @@ State 145
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
 
     $default  reduce using rule 57 (Expr)
 
 
-State 146
+State 147
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2107,14 +2129,14 @@ State 146
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR  shift, and go to state 105
-    DIV   shift, and go to state 106
-    MOD   shift, and go to state 113
+    STAR  shift, and go to state 106
+    DIV   shift, and go to state 107
+    MOD   shift, and go to state 114
 
     $default  reduce using rule 64 (Expr)
 
 
-State 147
+State 148
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2137,7 +2159,7 @@ State 147
     $default  reduce using rule 67 (Expr)
 
 
-State 148
+State 149
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2157,22 +2179,22 @@ State 148
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    GE      shift, and go to state 108
-    GT      shift, and go to state 109
-    LE      shift, and go to state 110
-    LT      shift, and go to state 111
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    GE      shift, and go to state 109
+    GT      shift, and go to state 110
+    LE      shift, and go to state 111
+    LT      shift, and go to state 112
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
 
     $default  reduce using rule 60 (Expr)
 
 
-State 149
+State 150
 
    52 Expr: Expr . OR Expr
    52     | Expr OR Expr .
@@ -2192,26 +2214,26 @@ State 149
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    AND     shift, and go to state 104
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    EQ      shift, and go to state 107
-    GE      shift, and go to state 108
-    GT      shift, and go to state 109
-    LE      shift, and go to state 110
-    LT      shift, and go to state 111
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    NE      shift, and go to state 114
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
-    XOR     shift, and go to state 119
+    AND     shift, and go to state 105
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    EQ      shift, and go to state 108
+    GE      shift, and go to state 109
+    GT      shift, and go to state 110
+    LE      shift, and go to state 111
+    LT      shift, and go to state 112
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    NE      shift, and go to state 115
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
+    XOR     shift, and go to state 120
 
     $default  reduce using rule 52 (Expr)
 
 
-State 150
+State 151
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2231,14 +2253,14 @@ State 150
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR  shift, and go to state 105
-    DIV   shift, and go to state 106
-    MOD   shift, and go to state 113
+    STAR  shift, and go to state 106
+    DIV   shift, and go to state 107
+    MOD   shift, and go to state 114
 
     $default  reduce using rule 63 (Expr)
 
 
-State 151
+State 152
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2258,16 +2280,16 @@ State 151
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR   shift, and go to state 105
-    DIV    shift, and go to state 106
-    MINUS  shift, and go to state 112
-    MOD    shift, and go to state 113
-    PLUS   shift, and go to state 116
+    STAR   shift, and go to state 106
+    DIV    shift, and go to state 107
+    MINUS  shift, and go to state 113
+    MOD    shift, and go to state 114
+    PLUS   shift, and go to state 117
 
     $default  reduce using rule 54 (Expr)
 
 
-State 152
+State 153
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2287,16 +2309,16 @@ State 152
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR   shift, and go to state 105
-    DIV    shift, and go to state 106
-    MINUS  shift, and go to state 112
-    MOD    shift, and go to state 113
-    PLUS   shift, and go to state 116
+    STAR   shift, and go to state 106
+    DIV    shift, and go to state 107
+    MINUS  shift, and go to state 113
+    MOD    shift, and go to state 114
+    PLUS   shift, and go to state 117
 
     $default  reduce using rule 55 (Expr)
 
 
-State 153
+State 154
 
    52 Expr: Expr . OR Expr
    53     | Expr . XOR Expr
@@ -2316,24 +2338,24 @@ State 153
    66     | Expr . DIV Expr
    67     | Expr . MOD Expr
 
-    STAR    shift, and go to state 105
-    DIV     shift, and go to state 106
-    EQ      shift, and go to state 107
-    GE      shift, and go to state 108
-    GT      shift, and go to state 109
-    LE      shift, and go to state 110
-    LT      shift, and go to state 111
-    MINUS   shift, and go to state 112
-    MOD     shift, and go to state 113
-    NE      shift, and go to state 114
-    PLUS    shift, and go to state 116
-    LSHIFT  shift, and go to state 117
-    RSHIFT  shift, and go to state 118
+    STAR    shift, and go to state 106
+    DIV     shift, and go to state 107
+    EQ      shift, and go to state 108
+    GE      shift, and go to state 109
+    GT      shift, and go to state 110
+    LE      shift, and go to state 111
+    LT      shift, and go to state 112
+    MINUS   shift, and go to state 113
+    MOD     shift, and go to state 114
+    NE      shift, and go to state 115
+    PLUS    shift, and go to state 117
+    LSHIFT  shift, and go to state 118
+    RSHIFT  shift, and go to state 119
 
     $default  reduce using rule 53 (Expr)
 
 
-State 154
+State 155
 
    32 Statement: WHILE LPAR ExprHelper RPAR . Statement
 
@@ -2347,154 +2369,154 @@ State 154
     WHILE      shift, and go to state 39
     ID         shift, and go to state 40
 
-    Statement         go to state 166
+    Statement         go to state 167
     MethodInvocation  go to state 45
     Assignment        go to state 46
     ParseArgs         go to state 47
 
 
-State 155
+State 156
 
    46 MethodInvocation: ID LPAR error RPAR .
 
     $default  reduce using rule 46 (MethodInvocation)
 
 
-State 156
+State 157
 
    47 COMMAExpr: COMMA . ExprHelper COMMAExpr
 
-    LPAR      shift, and go to state 61
-    MINUS     shift, and go to state 62
-    NOT       shift, and go to state 63
-    PLUS      shift, and go to state 64
+    LPAR      shift, and go to state 62
+    MINUS     shift, and go to state 63
+    NOT       shift, and go to state 64
+    PLUS      shift, and go to state 65
     PARSEINT  shift, and go to state 37
-    INTLIT    shift, and go to state 66
-    BOOLLIT   shift, and go to state 67
-    ID        shift, and go to state 68
-    REALLIT   shift, and go to state 69
+    INTLIT    shift, and go to state 67
+    BOOLLIT   shift, and go to state 68
+    ID        shift, and go to state 69
+    REALLIT   shift, and go to state 70
 
-    MethodInvocation  go to state 70
-    Assignment        go to state 71
-    ParseArgs         go to state 72
-    Expr              go to state 73
-    ExprHelper        go to state 167
-
-
-State 157
-
-   45 MethodInvocation: ID LPAR ExprHelper COMMAExpr . RPAR
-
-    RPAR  shift, and go to state 168
+    MethodInvocation  go to state 71
+    Assignment        go to state 72
+    ParseArgs         go to state 73
+    Expr              go to state 74
+    ExprHelper        go to state 168
 
 
 State 158
 
-   27 COMIDVAR: COMMA ID . COMIDVAR
+   45 MethodInvocation: ID LPAR ExprHelper COMMAExpr . RPAR
 
-    COMMA  shift, and go to state 126
-
-    $default  reduce using rule 28 (COMIDVAR)
-
-    COMIDVAR  go to state 169
+    RPAR  shift, and go to state 169
 
 
 State 159
+
+   27 COMIDVAR: COMMA ID . COMIDVAR
+
+    COMMA  shift, and go to state 127
+
+    $default  reduce using rule 28 (COMIDVAR)
+
+    COMIDVAR  go to state 170
+
+
+State 160
 
    26 VarDecl: Type ID COMIDVAR SEMICOLON .
 
     $default  reduce using rule 26 (VarDecl)
 
 
-State 160
+State 161
 
    19 FormalParams: STRING LSQ RSQ ID .
 
     $default  reduce using rule 19 (FormalParams)
 
 
-State 161
+State 162
 
    20 COMTYPID: COMMA Type . ID COMTYPID
 
-    ID  shift, and go to state 170
+    ID  shift, and go to state 171
 
 
-State 162
+State 163
 
    30 Statement: IF LPAR ExprHelper RPAR Statement .
    31          | IF LPAR ExprHelper RPAR Statement . ELSE Statement
 
-    ELSE  shift, and go to state 171
+    ELSE  shift, and go to state 172
 
     $default  reduce using rule 30 (Statement)
 
 
-State 163
+State 164
 
    40 Statement: PRINT LPAR STRLIT RPAR SEMICOLON .
 
     $default  reduce using rule 40 (Statement)
 
 
-State 164
+State 165
 
    39 Statement: PRINT LPAR ExprHelper RPAR SEMICOLON .
 
     $default  reduce using rule 39 (Statement)
 
 
-State 165
+State 166
 
    50 ParseArgs: PARSEINT LPAR ID LSQ ExprHelper . RSQ RPAR
 
-    RSQ  shift, and go to state 172
+    RSQ  shift, and go to state 173
 
 
-State 166
+State 167
 
    32 Statement: WHILE LPAR ExprHelper RPAR Statement .
 
     $default  reduce using rule 32 (Statement)
 
 
-State 167
+State 168
 
    47 COMMAExpr: COMMA ExprHelper . COMMAExpr
 
-    COMMA  shift, and go to state 156
+    COMMA  shift, and go to state 157
 
     $default  reduce using rule 48 (COMMAExpr)
 
-    COMMAExpr  go to state 173
+    COMMAExpr  go to state 174
 
 
-State 168
+State 169
 
    45 MethodInvocation: ID LPAR ExprHelper COMMAExpr RPAR .
 
     $default  reduce using rule 45 (MethodInvocation)
 
 
-State 169
+State 170
 
    27 COMIDVAR: COMMA ID COMIDVAR .
 
     $default  reduce using rule 27 (COMIDVAR)
 
 
-State 170
+State 171
 
    20 COMTYPID: COMMA Type ID . COMTYPID
 
-    COMMA  shift, and go to state 129
+    COMMA  shift, and go to state 130
 
     $default  reduce using rule 21 (COMTYPID)
 
-    COMTYPID  go to state 174
+    COMTYPID  go to state 175
 
 
-State 171
+State 172
 
    31 Statement: IF LPAR ExprHelper RPAR Statement ELSE . Statement
 
@@ -2508,41 +2530,41 @@ State 171
     WHILE      shift, and go to state 39
     ID         shift, and go to state 40
 
-    Statement         go to state 175
+    Statement         go to state 176
     MethodInvocation  go to state 45
     Assignment        go to state 46
     ParseArgs         go to state 47
 
 
-State 172
+State 173
 
    50 ParseArgs: PARSEINT LPAR ID LSQ ExprHelper RSQ . RPAR
 
-    RPAR  shift, and go to state 176
+    RPAR  shift, and go to state 177
 
 
-State 173
+State 174
 
    47 COMMAExpr: COMMA ExprHelper COMMAExpr .
 
     $default  reduce using rule 47 (COMMAExpr)
 
 
-State 174
+State 175
 
    20 COMTYPID: COMMA Type ID COMTYPID .
 
     $default  reduce using rule 20 (COMTYPID)
 
 
-State 175
+State 176
 
    31 Statement: IF LPAR ExprHelper RPAR Statement ELSE Statement .
 
     $default  reduce using rule 31 (Statement)
 
 
-State 176
+State 177
 
    50 ParseArgs: PARSEINT LPAR ID LSQ ExprHelper RSQ RPAR .
 

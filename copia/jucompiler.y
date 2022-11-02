@@ -44,7 +44,7 @@
 Program: CLASS ID LBRACE DeclMult RBRACE          {}    
 ; 
  
-DeclMult:  MethodDecl DeclMult                    {} //not sur 
+DeclMult:  MethodDecl DeclMult                    {} 
         |  FieldDecl  DeclMult                    {} 
         |  SEMICOLON  DeclMult                    {}  
         |                                         {} 
@@ -53,11 +53,11 @@ DeclMult:  MethodDecl DeclMult                    {} //not sur
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody {} 
 ; 
  
-FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {}//mandar o tipo para os filhos  
+FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {}
          | error SEMICOLON                        {} 
 ; 
  
-COMID: COMMA ID COMID                             {} //not done 
+COMID: COMMA ID COMID                             {} 
     |                                             {} 
 ; 
  
