@@ -1,0 +1,16 @@
+|LBRACE Statementrepeat RBRACE                                                      { 
+                                                                                                                
+                                                                                                                      NodePtr* node = $2; statementNum = 0;
+                                                                                                                while(node){
+                                                                                                                        
+                                                                                                                        if(strcmp(node->type,"NULL")!= 0){
+                                                                                                                                statementNum++;
+                                                                                                                        }
+                                                                                                                        node = node->next;
+                                                                                                                }
+                                                                                                                if(statementNum > 1){
+                                                                                                                        $$ = createNode("Block",yyval.lin,yyval.col);
+                                                                                                                        appendNode($$,$2);
+                                                                                                                }else{
+                                                                                                                        $$ = $2;
+                                                                                                                }

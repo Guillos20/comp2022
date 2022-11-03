@@ -10,6 +10,7 @@
 
     int yylex(void);
     extern void yyerror(char *s);
+    int blockCount = 0;
 %}
 
 %union{
@@ -20,7 +21,7 @@
 
 %token ELSE DOTLENGTH DOUBLE AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ SEMICOLON ARROW LSHIFT RSHIFT XOR BOOL CLASS IF INT  PRINT PARSEINT PUBLIC RETURN STATIC STRING VOID WHILE 
 %token <stringValue> STRLIT INTLIT RESERVED BOOLLIT ID REALLIT
-%type <node> Program DeclMult MethodDecl FieldDecl COMID Type MethodHeader FormalParams COMTYPID MethodBody BODY VarDecl COMIDVAR Statement StatementHelper MethodInvocation COMMAExpr Assignment ParseArgs Expr ExprHelper
+%type <node> Program DeclMult MethodDecl FieldDecl COMID Type MethodHeader FormalParams COMTYPID MethodBody BODY VarDecl COMIDVAR Statement StatementHelper SemicolonHelper MethodInvocation COMMAExpr Assignment ParseArgs Expr ExprHelper
 
 %left ARROW
 %left COMMA
@@ -45,7 +46,7 @@ Program: CLASS ID LBRACE DeclMult RBRACE          {$$ = root = createNode("Progr
 ;
 
 DeclMult:  MethodDecl DeclMult                    {if($1 != NULL){$$ = $1; if($2 != NULL){$1->sibling = $2;};}else{$$=NULL;};} //not sur
-        |  FieldDecl  DeclMult                    {if($1 != NULL){$$ = $1; if($2 != NULL){$1->sibling = $2;};}else{$$=NULL;};}
+        |  FieldDecl  DeclMult                    {if($1 != NULL){$$ = $1; if($2 != NULL){add_sibling($1, $2);};}else{$$=NULL;};}
         |  SEMICOLON  DeclMult                    {if($2 != NULL){$$ = $2;}else{$$=NULL;};} 
         |                                         {$$ = NULL;}
         ;
@@ -53,11 +54,11 @@ DeclMult:  MethodDecl DeclMult                    {if($1 != NULL){$$ = $1; if($2
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody {$$ = createNode("MethodDecl",NULL,createNode("MethodHeader",NULL,$3,createNode("MethodBody",NULL,$4,NULL)),NULL);}
 ;
 
-FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {$$ = createNode("FieldDecl",NULL,$3,$5); Node *id = createNode("Id",$4, NULL, NULL);$3->sibling=id;}//mandar o tipo para os filhos 
+FieldDecl: PUBLIC STATIC Type ID COMID SEMICOLON  {Node *Fd = createNode("FieldDecl",NULL,$3,NULL); Node *id = createNode("Id",$4, NULL, NULL);$3->sibling=id;$$=Fd;add_sibling(Fd, $5); save_type(Fd, $3);}
          | error SEMICOLON                        {$$ = NULL;}
 ;
 
-COMID: COMMA ID COMID                             {$$ = createNode("FieldDecl",NULL,createNode("Id", $2, NULL, NULL),$3);} //not done
+COMID: COMMA ID COMID                             {$$ = createNode("FieldDecl",NULL,createNode("Id", $2, NULL, NULL),NULL);add_sibling($$, $3);}
     |                                             {$$ = NULL;}
 ;
 
@@ -84,34 +85,82 @@ COMTYPID:  COMMA Type ID COMTYPID                 {$$ = createNode("ParamDecl",N
 MethodBody: LBRACE BODY RBRACE                    {$$ = $2;}
 ;
 
-BODY:Statement BODY                               {if($1 != NULL){ $$ = $1;if($2 != NULL){$1->sibling = $2;}}else{$$ = NULL;};}   //body is no bueno aswell
-    | VarDecl BODY                                {$$ = $1;if($2 != NULL){$1->sibling = $2;}}
+BODY:Statement BODY                               {if($1 != NULL){ $$ = $1;if($2 != NULL){add_sibling($1,$2);}}else{$$ = NULL;};}   //body is no bueno aswell
+    | VarDecl BODY                                {if($1 != NULL){ $$ = $1;if($2 != NULL){add_sibling($1,$2);}}else if($1==NULL){$$=$2;}else{$$ = NULL;};}
     |                                             {$$ = NULL;}
 ;
 
-VarDecl:Type ID COMIDVAR SEMICOLON                {$$ = createNode("VarDecl",NULL,$1,$3);Node *id = createNode("Id",$2,NULL,NULL); $1->sibling=id;}//ver como por vardecl sempre, o comid esta com fielddecl e temos de mandar o type para o irmao tambem 
+VarDecl:Type ID COMIDVAR SEMICOLON                {$$ = createNode("VarDecl",NULL,NULL,$3);
+                                                   add_son($$, $1);
+                                                   Node *id = createNode("Id",$2,NULL,NULL); 
+                                                   add_sibling($1, id);
+                                                   save_type($$, $1);
+                                                   
+                                                }
 ;
-COMIDVAR:COMMA ID COMIDVAR                        {$$ = createNode("VarDecl",NULL,createNode("Id", $2, NULL, NULL),$3);} 
-    |                                             {$$ = NULL;}
+COMIDVAR:COMMA ID COMIDVAR                          {$$ = createNode("VarDecl",NULL,NULL,$3); 
+                                                    
+                                                    Node *id = createNode("Id",$2,NULL,NULL);
+                                                    add_son($$, id); 
+                                                    } 
+    |                                               {$$ = NULL;}
 
 ;
 
-Statement: LBRACE StatementHelper RBRACE                {$$ = createNode("Block", NULL,$2,NULL);}//if($2 != NULL){Node * block  = $$ = block;} else{$$ = $2;}statement is no bueno 
-    | IF LPAR ExprHelper RPAR Statement                 {$$ = createNode("If",NULL, $3, NULL); Node *block=createNode("Block",NULL,$5, createNode("Block",NULL,NULL, NULL));$3->sibling = block;}// this almost done .perguntar ao stor sobre os blocks 
-    | IF LPAR ExprHelper RPAR Statement ELSE Statement  {$$ = createNode("If",NULL, $3, NULL);Node *elseblock=createNode("Block",NULL,$5, NULL); $3->sibling = elseblock; elseblock->sibling=$7;} //Node *ifblock=createNode("Block",NULL,$5, NULL); $3->sibling = ifblock;Node *elseblock=createNode("Block",NULL,$5, NULL); ifblock->sibling = elseblock;
+Statement: LBRACE StatementHelper RBRACE                {Node * node = $2;blockCount = 0; 
+                                                        while(node){
+                                                            blockCount++;
+                                                            node = node->sibling;
+                                                            
+                                                        }
+                                                        //printf("%d\n", blockCount);
+                                                        if(blockCount !=1){
+                                                            $$ = createNode("Block", NULL, $2, NULL);
+                                                        }else{
+                                                        $$ = $2;
+                                                        }
+                                                        }
+    | IF LPAR ExprHelper RPAR Statement                 {$$ = createNode("If",NULL, $3, NULL);
+                                                        if(blockCount<1){ 
+                                                            Node *block=createNode("Block",NULL,NULL, $5);
+                                                            add_sibling($3, block);
+                                                        }else{
+                                                            add_son($$, $5);
+                                                            add_son($$, createNode("Block", NULL,NULL,NULL));}
+                                                        }
+    | IF LPAR ExprHelper RPAR Statement ELSE Statement  {$$ = createNode("If",NULL, $3, NULL); 
+                                                            if(blockCount<1){
+                                                                Node *ifblock=createNode("Block",NULL, NULL,$5); 
+                                                                add_sibling($3, ifblock);
+                                                                add_sibling(ifblock, $7);
+                                                                }else{
+                                                                    add_son($$, $5);
+                                                                    add_son($$, $7);
+
+                                                                }
+                                                        
+                                                         
+                                                        
+                                                        }
     | WHILE LPAR ExprHelper RPAR Statement              {$$ = createNode("While",NULL, $3, NULL) ;if($5 != NULL){$3->sibling = $5;}}
     | RETURN SEMICOLON                                  {$$ = createNode("Return",NULL,NULL,NULL);}
     | RETURN ExprHelper SEMICOLON                       {$$ = createNode("Return",NULL,$2,NULL);}
     | MethodInvocation SEMICOLON                        {$$ = $1;}
     | Assignment SEMICOLON                              {$$ = $1;}
     | ParseArgs SEMICOLON                               {$$ = $1;}
-    | SEMICOLON                                         {$$ = NULL;}   //criar estado auxiliar maybe i wanna kommit die
+    | SemicolonHelper                                   {$$ = $1;}
     | PRINT LPAR ExprHelper RPAR SEMICOLON              {$$ = createNode("Print",NULL,$3,NULL);}
     | PRINT LPAR STRLIT RPAR SEMICOLON                  {$$ = createNode("Print",NULL,createNode("StrLit",$3,NULL,NULL),NULL);}
     | error SEMICOLON                                   {$$ = NULL;}
     ;
-StatementHelper:Statement StatementHelper               {if($1 ==NULL){$$ = $2;}else if($2==NULL){$$ = $1;}else{$$=$1;$1->sibling=$2;}}
+StatementHelper:Statement StatementHelper               {if($1 == NULL){$$ = $2;}
+                                                        else if($2 == NULL){$$ = $1;}
+                                                        else{$$ = $1;
+                                                        add_sibling($1, $2);}
+                                                        }
     |                                                   {$$ = NULL;}
+;
+SemicolonHelper:SEMICOLON                               {if(blockCount!=1){$$ = createNode("Block", NULL, NULL, NULL);} $$ = NULL;}    
 ;
 MethodInvocation: ID LPAR RPAR                          {Node *id = createNode("Id",$1,NULL,NULL); $$ = createNode("Call",NULL,id, NULL); }
     | ID LPAR ExprHelper COMMAExpr RPAR                 {Node *id = createNode("Id",$1,NULL,$3);$3->sibling = $4;$$ = createNode("Call",NULL,id, NULL);} //this still needs work cuz is not calling the calls
@@ -129,8 +178,8 @@ ParseArgs:PARSEINT LPAR ID LSQ ExprHelper RSQ RPAR      {$$ = createNode("ParseA
     |PARSEINT LPAR error RPAR                           {$$ = NULL;}
     ;
 
-Expr:Expr OR Expr                                 {$$ = createNode("Or",NULL,$1,NULL);$1->sibling = $3;}
-    |Expr XOR Expr                                {$$ = createNode("Xor",NULL,$1,NULL);$1->sibling = $3;}
+Expr:Expr OR Expr                                       {$$ = createNode("Or",NULL,$1,NULL);$1->sibling = $3;}
+    |Expr XOR Expr                                      {$$ = createNode("Xor",NULL,$1,NULL);$1->sibling = $3;}
     |Expr LSHIFT Expr                             {$$ = createNode("Lshift",NULL,$1,NULL);$1->sibling = $3;}
     |Expr RSHIFT Expr                             {$$ = createNode("Rshift",NULL,$1,NULL);$1->sibling = $3;}
     |Expr AND Expr                                {$$ = createNode("And",NULL,$1,NULL);$1->sibling = $3;} 

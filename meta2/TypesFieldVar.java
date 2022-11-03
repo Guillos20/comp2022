@@ -7,5 +7,6 @@ class Factorial {
     }
     public static boolean factorial(int n) {
     	double r,y,x;
+        
     }
 }
