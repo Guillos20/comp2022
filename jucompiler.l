@@ -160,7 +160,7 @@ illseq          \\[^fnrt\\\"\r\n]?
 {newline}         {col_yacc = coluna;coluna = 1;linha += 1;}
 .                 {col_yacc = coluna;{printf("Line %d, col %d: illegal character (%s)\n",yylineno,coluna,yytext);}coluna += 1;}
 {reallit}         {col_yacc = coluna;coluna += yyleng;if(fc == 1){printf("REALLIT(%s)\n",yytext);} else{char* str = malloc(yyleng);sprintf(str, "%s", yytext); yytext = str;yylval.stringValue =  strdup(yytext);return REALLIT;};}
-<<EOF>>           {col_yacc = coluna;yyterminate();}
+<<EOF>>           {col_yacc = coluna;yyterminate();}  
 %%
 
 int main(int argc, char** argv){

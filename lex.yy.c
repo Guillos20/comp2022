@@ -1487,7 +1487,7 @@ YY_RULE_SETUP
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COM2):
 #line 163 "jucompiler.l"
-{col_yacc = coluna;yyterminate();}
+{col_yacc = coluna;yyterminate();}  
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
