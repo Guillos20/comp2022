@@ -12,6 +12,17 @@ Node *createNode(char *token, char *value, Node *son, Node *sibling)
     n->sibling = sibling;
     return n;
 }
+
+Table *createTable(char* id, struct Table *next, struct Table_ent *entry){
+    Table *table = malloc(sizeof(Table));
+    if (table == NULL){
+        return NULL;}
+    table->id = id;
+    table->next = next;
+    table->entry = entry;
+}
+
+
 void save_type(Node* first, Node* type) {
     Node* aux = first->sibling;
     Node* temp;
