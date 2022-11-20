@@ -7,6 +7,8 @@
     #include <string.h>
     #include "y.tab.h"
     #include "struct.h"
+    #include "symtab.h"
+
    
 
     int svLine = 1;
@@ -17,7 +19,7 @@
     bool ignoreSTR = false;
     int col_yacc = 1;
     int error = 0;
-
+    table *symtab = NULL;
       
 %}
 
@@ -185,6 +187,11 @@ int main(int argc, char** argv){
             fc = 3;
             yyparse(); 
             yylex();                
+        }
+        if(strcmp(argv[i], "-s") == 0){
+            fc = 3;
+            yyparse();
+            yylex();
         }
        
     }

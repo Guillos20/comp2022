@@ -2535,6 +2535,11 @@ int main(int argc, char** argv){
             yyparse(); 
             yylex();                
         }
+        if(strcmp(argv[i], "-s") == 0){
+            fc = 3;
+            yyparse();
+            yylex();
+        }
        
     }
     return 0;

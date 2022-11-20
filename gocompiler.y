@@ -228,11 +228,11 @@ Statement:
 ExprHelper:
         Expr                                            {$$=$1;}
         |                                               {$$=NULL;}
-
+;
 PrintHelper:
         Expr                                            {$$=$1;}
         |STRLIT                                         {$$ = create_node("StrLit", $1);}
-
+;
 StatementHelper:
         StatementHelper Statement SEMICOLON             {
                                                         if($1 == NULL) $$ = $2;
