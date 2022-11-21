@@ -13,13 +13,30 @@ Node *createNode(char *token, char *value, Node *son, Node *sibling)
     return n;
 }
 
-Table *createTable(char* id, struct Table *next, struct Table_ent *entry){
+Table *createTable(char* id, int type, struct Table *next, struct Table_ent *entry){
     Table *table = malloc(sizeof(Table));
-    if (table == NULL){
+    /*if (table == NULL){
         return NULL;}
+    */
     table->id = id;
+    table->type = type;
     table->next = next;
     table->entry = entry;
+    return table;
+}
+
+Table_ent *insertEntry(char *type[8], char *id, int isParam , struct Table_ent *next){
+    Table_ent *ent = malloc(sizeof(Table_ent));
+    ent->id = id;
+    ent->isParam = isParam;
+    ent->next= next;
+    for (int i = 0; i < sizeof(*type); i++)
+    {
+       ent->typ[i] = type[i]; 
+    }
+    
+    
+    return ent;
 }
 
 

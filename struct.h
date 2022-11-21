@@ -19,10 +19,14 @@ typedef struct Table//para identificar as tabelas
 
 typedef struct Table_ent
 {
-    char *id;
-    int num_params;
-    struct table_ent *next;
+    char *id;//nome da funçao na class ou nome da variavel no metodo
+    char *typ[8];//mais que um type para class pelo menos, no metodo ade ser apenas 1 
+    int isParam; // caso no metodo seje param para adicionar á frente: 0 se for 1 se nao for 
+    
+    struct Table_ent *next;
 }Table_ent;
+
+typedef enum {integer, string, doub, boolean, undef} basic_type;
 
 Node *root;
 
@@ -33,5 +37,7 @@ void print_tree(Node *root, int num);
 void save_type(Node *first, Node *type);
 Node *add_sibling(Node * someone, Node * sibling);
 Node *add_son(Node * parent, Node * son);
+Table *createTable(char* id, int type, struct Table *next, struct Table_ent *entry);
+Table_ent *insertEntry(char *type[8], char *id, int isParam , struct Table_ent *next);
 
 #endif // STRUCT_H

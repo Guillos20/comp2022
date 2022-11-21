@@ -191,7 +191,7 @@ int main(int argc, char** argv){
         if(strcmp(argv[i], "-s") == 0){
             fc = 3;
             yyparse();
-            yylex();
+            initTable(root);
         }
        
     }

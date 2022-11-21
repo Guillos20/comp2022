@@ -7,6 +7,7 @@
     #include <string.h>
     #include "struct.h"
     #include "y.tab.h"
+    #include "symtab.h"
 
     int yylex(void);
     extern void yyerror(char *s);
