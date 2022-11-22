@@ -3,6 +3,7 @@
 
 #include "struct.h"
 
+extern Table *symtab;
 
 typedef struct symtab
 {
@@ -13,5 +14,7 @@ typedef struct symtab
 void initTable(Node *node);
 char* typeChange(char* aux);
 Table_ent *create_entry_Class_Table(Node * node, Table *global_table);
+void print_Table(Table *start);
+void print_Entrys(Table *tab);
 
 #endif

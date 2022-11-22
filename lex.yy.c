@@ -849,6 +849,7 @@ char *yytext;
     #include "struct.h"
     #include "symtab.h"
 
+    extern Table *symtab;
    
 
     int svLine = 1;
@@ -859,7 +860,6 @@ char *yytext;
     bool ignoreSTR = false;
     int col_yacc = 1;
     int error = 0;
-    table *symtab = NULL;
       
 #line 865 "lex.yy.c"
 
@@ -2541,6 +2541,7 @@ int main(int argc, char** argv){
             fc = 3;
             yyparse();
             initTable(root);
+            print_Table(symtab);
         }
        
     }

@@ -25,8 +25,9 @@ Table *createTable(char* id, int type, struct Table *next, struct Table_ent *ent
     return table;
 }
 
-Table_ent *insertEntry(char *type[8], char *id, int isParam , struct Table_ent *next){
+Table_ent *insertEntry(char* ret,char *type[8], char *id, int isParam , struct Table_ent *next){
     Table_ent *ent = malloc(sizeof(Table_ent));
+    ent -> ret = ret;
     ent->id = id;
     ent->isParam = isParam;
     ent->next= next;

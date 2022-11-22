@@ -4,13 +4,13 @@
 #include <stdio.h>
 #include "struct.h"
 
-extern table *symtab;
+Table *symtab;
 
 void initTable(Node *node)
 {
 
     char *name = node->son->value;
-    Table *init = createTable(name, 1, NULL, NULL);
+    symtab = createTable(name, 1, NULL, NULL);
     node = node->son;
     while (node->sibling != NULL)
     { // percorre metodo a metodo ou field decl
@@ -19,7 +19,7 @@ void initTable(Node *node)
             if (strcmp(node->sibling->son->token, "MethodHeader") == 0)
             {
                 Node *no = node->sibling;
-                create_entry_Class_Table(no, init);
+                create_entry_Class_Table(no, symtab);
             }
         }
         node->sibling = NULL;
@@ -27,17 +27,17 @@ void initTable(Node *node)
     printf("===== Class %s Symbol Table =====\n", name);
 }
 
-// table ent tem type[8], id, se éparametro, e o next ent
+// table ent tem type[8], id, se é parametro, e o next ent
 
 Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
 { // este nó será o method decl ou field decl
  Table_ent *entry;
+ char *typeAux[8];
+ int count = 0;
     if (strcmp(node->token, "MethodDecl") == 0)
     {
         char *tipo = typeChange(node->son->son->token);
         char *id = node->son->son->sibling->value;
-        char *typeAux[8];
-        int count = 0;
         Node *aux = node->son->son->sibling->sibling->son; // ParamDecl
         if (aux != NULL)
         { // se o methodParams tem filhos
@@ -49,13 +49,19 @@ Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
                 count++;
             }
         }
-        Table_ent *entry = insertEntry(typeAux, id, 1, NULL);
+        entry = insertEntry(tipo,typeAux, id, 1, NULL);
         printf("%s", entry->id);
+        count = 0;
+        bzero(typeAux,sizeof(typeAux));
     }
     if (strcmp(node->token, "FieldDecl") == 0)
-    {
-       
-
+    {   
+        char *t = malloc(256);
+        t = typeChange(node->son->token);
+        typeAux[count] = t;
+        char *id = node->son->sibling->value;
+        entry = insertEntry(NULL,typeAux,id,1,NULL);
+        bzero(typeAux,sizeof(typeAux));
     }
     if (global_table->entry == NULL)
     {
@@ -94,3 +100,21 @@ char *typeChange(char *aux)
         return "double";
     }
 }
+
+void print_Table(Table *start){
+    Table *aux = start;
+    while(aux!=NULL){
+        if(aux->type == 1){
+            char* name = aux->id;
+            printf("===== Class %s Symbol Table =====\n", name);
+            print_Entrys(aux);
+        }
+        if(aux->type == 2){
+            
+        }
+        aux = aux->next;
+    }
+}
+
+
+void print_Entrys(Table *tab){}
