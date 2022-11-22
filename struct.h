@@ -13,6 +13,7 @@ typedef struct Table//para identificar as tabelas
 {
     char *id;//nome do metodo/classe
     int type;// se é class ou metodo; 1 para class 2 para método
+    char *t[8];//para os tipos dos metodos; NUll para a class
     struct Table *next;
     struct Table_ent *entry;// para identificar o que esta dentro de uma tabela 
 } Table;
@@ -38,7 +39,7 @@ void print_tree(Node *root, int num);
 void save_type(Node *first, Node *type);
 Node *add_sibling(Node * someone, Node * sibling);
 Node *add_son(Node * parent, Node * son);
-Table *createTable(char* id, int type, struct Table *next, struct Table_ent *entry);
+Table *createTable(char* id, int type,char* t[8], struct Table *next, struct Table_ent *entry);
 Table_ent *insertEntry(char *ret,char *type[8], char *id, int isParam , struct Table_ent *next);
 
 #endif // STRUCT_H

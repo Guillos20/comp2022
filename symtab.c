@@ -10,19 +10,20 @@ void initTable(Node *node)
 {
 
     char *name = node->son->value;
-    symtab = createTable(name, 1, NULL, NULL);
-    node = node->son;
-    while (node->sibling != NULL)
+    symtab = createTable(name, 1,NULL,NULL, NULL);
+    node = node->son->sibling;
+    while (node != NULL)
     { // percorre metodo a metodo ou field decl
-        if (strcmp(node->sibling->token, "MethodDecl") == 0)
+        if (strcmp(node->token, "MethodDecl") == 0)
         {
             if (strcmp(node->sibling->son->token, "MethodHeader") == 0)
             {
-                Node *no = node->sibling;
-                create_entry_Class_Table(no, symtab);
+                create_entry_Class_Table(node, symtab);
             }
+        }if(strcmp(node->sibling->token,"FieldDecl") == 0){
+            create_entry_Class_Table(node,symtab);
         }
-        node->sibling = NULL;
+        node = node->sibling;
     }
     printf("===== Class %s Symbol Table =====\n", name);
 }
@@ -110,11 +111,19 @@ void print_Table(Table *start){
             print_Entrys(aux);
         }
         if(aux->type == 2){
-            
+            printf("===== Method %s(",aux->id);
+            for(int i = 0; i< sizeof(aux->t);i++){
+                if(i=(sizeof(aux->t)-1)){
+                    printf("%s) Symbol Table =====\n", aux->t[i]);
+                }else{
+                printf("%s,", aux->t[i]);
+                 }
+            }
+            print_Entrys(aux);
         }
         aux = aux->next;
     }
 }
 
 
-void print_Entrys(Table *tab){}
+void print_Entrys(Table *tab){}//printar as entrys dependendo se é class ou metodo
