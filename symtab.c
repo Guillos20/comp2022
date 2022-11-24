@@ -3,27 +3,71 @@
 #include <string.h>
 #include <stdio.h>
 #include "struct.h"
+#include <ctype.h>
 
 Table *symtab;
 
 void initTable(Node *node)
 {
-    char *params[8] = {"yes"};
+    char *params[8] = {"aiugsdiugha"};
     char *name = node->son->value;
     // printf("===== Class %s Symbol Table =====\n", name);
-    symtab = createTable(name, 1, params,NULL, NULL);
+    symtab = createTable(name, 1, NULL, NULL, NULL);
+    Table *aux = symtab;
     node = node->son->sibling;
+    type *typ_aux = NULL;
+    create_entry_Class_Table(node, symtab);
     while (node != NULL)
     { // percorre metodo a metodo ou field decl
         if (strcmp(node->token, "MethodDecl") == 0)
         {
-            if (strcmp(node->son->token, "MethodHeader") == 0)
+            if (strcmp(node->son->token, "MethodHeader") == 0) // podemos vir a poder tirar isto uma vez que aparece sempre ,acho
             {
-                create_entry_Class_Table(node, symtab);
+                aux = symtab;
+                if (aux->next == NULL)
+                {
+                    typ_aux = CreateType_List(node->son->son->sibling->sibling->son);
+                    aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
+                    create_entry_Class_Table(node, aux->next);
+                }
+                else
+                {
+                    aux = aux->next;
+                    while (aux->next)
+                    {
+                        aux = aux->next;
+                    }
+                    typ_aux = CreateType_List(node->son->son->sibling->sibling->son);
+                    aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
+                    create_entry_Class_Table(node, aux->next);
+                    // printf("%s depois\n", entry_aux->id);
+                }
             }
-        }if(strcmp(node->token,"FieldDecl") == 0){
-            create_entry_Class_Table(node,symtab);
         }
+        /*if (strcmp(node->token, "FieldDecl") == 0)
+        {
+            aux = symtab;
+            if (aux->next == NULL){
+        //printf("GIULLOS  ");
+                    aux->next = createTable(node->son->son->sibling->value, 2, params, NULL, NULL);
+                    create_entry_Class_Table(node, aux->next);
+                }
+                else
+                {
+                    //printf("anibau  ");
+                    aux = aux->next;
+                    while (aux->next){
+                            aux = aux->next;
+            //printf("%s  opa \n", entry_aux->id);
+                        }
+                aux = createTable(node->son->son->sibling->value, 2, params, NULL, NULL);
+                create_entry_Class_Table(node, aux->next);
+        // printf("%s depois\n", entry_aux->id);
+    }
+            symtab->next = createTable("entrou2", 1, NULL, NULL, NULL);
+            create_entry_Class_Table(node, symtab);
+            // symtab = symtab->next;
+        }*/
         node = node->sibling;
     }
 }
@@ -32,54 +76,99 @@ void initTable(Node *node)
 
 Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
 { // este nó será o method decl ou field decl
- Table_ent *entry;
- char *typeAux[8];
- int count = 0;
-    if (strcmp(node->token, "MethodDecl") == 0)
+    Table_ent *entry;
+    type *parametros = NULL;
+    int count = 0;
+    while (node != NULL)
     {
-        char *tipo = typeChange(node->son->son->token);
-        char *id = node->son->son->sibling->value;
-        Node *aux = node->son->son->sibling->sibling->son; // ParamDecl
-        // printf("%s\n", aux->token);
-        if (aux != NULL)
-        { // se o methodParams tem filhos
-            for (Node *filho = aux; filho; filho = aux->sibling)
-            { // percorre os paramDecl
-                char *t = malloc(256);
-                t = typeChange(filho->son->token);
-                typeAux[count] = t;
-                count++;
-            }
-        }
-        entry = insertEntry(tipo,typeAux, id, 1, NULL);
-        //printf("%s", entry->id);
-        count = 0;
-        bzero(typeAux,sizeof(typeAux));
-    }
-    if (strcmp(node->token, "FieldDecl") == 0)
-    {   
-        char *t = malloc(256);
-        t = typeChange(node->son->token);
-        typeAux[count] = t;
-        char *id = node->son->sibling->value;
-        entry = insertEntry(NULL,typeAux,id,1,NULL);
-        bzero(typeAux,sizeof(typeAux));
-    }
-    if (global_table->entry == NULL)
-    {
-        global_table->entry = entry;
-    }
-    else
-    {
-        Table_ent *entry_aux =global_table->entry;
-        while (entry_aux != NULL){
-            // printf("%s\n", entry_aux->id);
-            entry_aux = entry_aux->next;
-        }
-        entry_aux = entry;
-                    // printf("%s depois\n", entry_aux->id);
+        if (strcmp(node->token, "MethodDecl") == 0)
+        {
+            Node *paramdecl = node->son->son->sibling->sibling->son;//paramDecl
+            parametros = CreateType_List(paramdecl);
+            char *tipo = typeChange(node->son->son->token);
+            char *id = node->son->son->sibling->value;
+            // printf("%s\n", paramdecl->token);
+            // if (paramdecl != NULL)
+            // { // se o methodParams tem filhos
+            //     for (Node *filho = paramdecl; filho != NULL; filho = filho->sibling)
+            //     { // percorre os paramDecl
+            //         char *t = malloc(256);
+            //         t = typeChange(filho->son->token);
+            //         // printf("%s olhaaaaa ", t);
+            //         // printf("kkkkkkkkkk %d " , count);
+            //         typeAux[count] = t;
+            //         // printf(" %d   indice ", count);
+            //         count++;
+            //     }
+            // }
+            /*for(int i = 0; i < sizeof(typeAux);i++){
+                printf("%s TypeAux  ", typeAux[i]);
+            }*/
+            parametros = CreateType_List(paramdecl);
 
+            entry = insertEntry(tipo, parametros, id, 0, NULL);
+            // printf("%s  ", entry->id);
+            // count = 0;
+            // bzero(typeAux, sizeof(typeAux));
+        }
+        if (strcmp(node->token, "FieldDecl") == 0)
+        {
+
+            parametros = CreateType_List(node);
+            char *id = node->son->sibling->value;
+            entry = insertEntry(NULL, parametros, id, 1, NULL);
+            // bzero(typeAux, sizeof(typeAux));
+        }
+        // printf("welelle  ");
+        if (global_table->entry == NULL)
+        {
+            // printf("GIULLOS  ");
+            global_table->entry = entry;
+        }
+        else
+        {
+            // printf("anibau  ");
+            Table_ent *entry_aux = global_table->entry;
+            while (entry_aux->next)
+            {
+
+                // printf("%s  opa \n", entry_aux->id);
+                entry_aux = entry_aux->next;
+            }
+            entry_aux->next = entry;
+            // printf("%s depois\n", entry_aux->id);
+        }
+        node = node->sibling;
     }
+}
+
+type *CreateType_List(Node *cabeca)
+{
+    int count = 0;
+    type *type_aux = NULL;
+    if (cabeca != NULL) // ParamDecl
+    {             
+        if(strcmp(cabeca->token,"ParamDecl")==0){     // se o methodParams tem filhos
+        for (Node *filho = cabeca; filho != NULL; filho = filho->sibling)
+        { // percorre os paramDecl ou o field
+                count ++;
+            char *t = typeChange(filho->son->token);
+            if (type_aux == NULL){
+                type_aux = createType(t, NULL);
+
+            }else{
+                while (type_aux!=NULL){
+                    type_aux = type_aux->next;
+                }
+                type_aux = createType(t, NULL);
+            }
+            }
+        }if(strcmp(cabeca->token,"FieldDecl")==0){
+            char *t = typeChange(cabeca->son->token);
+            type_aux = createType(t, NULL);
+        }
+    }
+    return type_aux;
 }
 
 char *typeChange(char *aux)
@@ -106,23 +195,43 @@ char *typeChange(char *aux)
     }
 }
 
-void print_Table(Table *start){
+void print_Table(Table *start)
+{
     Table *aux = start;
-    while(aux!=NULL){
-        if(aux->type == 1){
-            char* name = aux->id;
+    while (aux)
+    {
+        if (aux->type == 1)
+        {
+            char *name = aux->id;
             printf("===== Class %s Symbol Table =====\n", name);
             print_Entrys(aux);
-            //printf("sai lololololol\n");
+            // printf("sai lololololol 132\n");
         }
-        if(aux->type == 2){
-            printf("===== Method %s(",aux->id);
-            for(int i = 0; i< sizeof(aux->t);i++){
-                if(i=(sizeof(aux->t)-1)){
-                    printf("%s) Symbol Table =====\n", aux->t[i]);
-                }else{
-                printf("%s,", aux->t[i]);
-                 }
+        if (aux->type == 2)
+        {
+           
+            printf("===== Method %s(", aux->id);
+            if (aux->tipo)
+            {
+                type *t_aux = aux->tipo;
+                while (t_aux->tipo && t_aux->next != NULL)
+                {
+                    printf("%s,", t_aux->tipo);
+                    t_aux = t_aux->next;
+                    // printf("%s porrada \n",entry->typ[i+1]);
+                }
+                if (t_aux->tipo)
+                {
+                    printf("%s) Symbol Table =====\n", t_aux->tipo);
+                }
+                else
+                {
+                    printf(") Symbol Table =====\n");
+                }
+            }
+            else
+            {
+                printf(") Symbol Table =====\n");
             }
             print_Entrys(aux);
         }
@@ -130,19 +239,71 @@ void print_Table(Table *start){
     }
 }
 
-
-void print_Entrys(Table *tab){
-    //printf("entrei lololololl\n");
+void print_Entrys(Table *tab)
+{
+    // printf("entrei lololololl\n");
+    /*if(tab->entry != NULL){
+        printf("pppppp\n");
+    }else{
+        printf("tttttt\n");
+    }*/
+    // printf("okei\n");
     Table_ent *entry = tab->entry;
-    while(entry!=NULL){
-    printf("%s\t(", entry->id);
-    // while(tab->typ[i]){
-        printf("%s", entry->typ[0]);
-    //     i++;
-    // }
-    printf(")\t%s\n\n", entry->ret);
+    // printf("okei\n");
+    if (tab->type == 1)
+    {
+        while (entry != NULL)
+        {
+            // printf("jordao \n");
+            printf("%s\t", entry->id); // print ID
+            // printf("burro\n");
+            if (entry->isParam == 1)
+            {
+                printf("%s", entry->tipo->tipo);
+                // printf("guilherme\n");
+            }
+            if (entry->isParam == 0)
+            {
 
-    entry = entry->next;
-}
-return;
-}//printar as entrys dependendo se é class ou metodo
+                int i = 0;
+                printf("(");
+                // if (entry->typ[2] != NULL)
+                // {
+                //     printf("CONAAAA");
+                // }
+                // printf("%s   puta \n", entry->typ[2]);
+                type *t_aux = entry->tipo;
+                while (t_aux->tipo && t_aux->next != NULL)
+                {
+                    printf("%s,", t_aux->tipo);
+                    t_aux = t_aux->next;
+                    // printf("%s porrada \n",entry->typ[i+1]);
+                }
+                if (t_aux->tipo)
+                {
+                    printf("%s)", t_aux->tipo);
+                }
+                else
+                {
+                    printf(")");
+                }
+            }
+            if (entry->ret != NULL)
+            {
+                printf("\t%s\n", entry->ret);
+            }
+            else
+            {
+                printf("\n");
+            }
+            entry = entry->next;
+        }
+        printf("\n");
+        return;
+    }
+    else
+    {
+
+        return;
+    }
+} // printar as entrys dependendo se é class ou metodo

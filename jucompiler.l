@@ -193,7 +193,7 @@ int main(int argc, char** argv){
             yyparse();
             initTable(root);
             print_Table(symtab);
-            print_tree(root, 0);
+            
         }
        
     }
