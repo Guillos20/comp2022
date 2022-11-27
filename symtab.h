@@ -17,5 +17,7 @@ Table_ent *create_entry_Class_Table(Node * node, Table *global_table);
 void print_Table(Table *start);
 void print_Entrys(Table *tab);
 type *CreateType_List(Node *cabeca);
+Table_ent *create_entry_Method_Table(Node *node, Table *global_table);
+
 
 #endif

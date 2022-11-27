@@ -28,7 +28,8 @@ void initTable(Node *node)
                 {
                     typ_aux = CreateType_List(node->son->son->sibling->sibling->son);
                     aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
-                    create_entry_Class_Table(node, aux->next);
+                    create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
+                    
                 }
                 else
                 {
@@ -39,7 +40,7 @@ void initTable(Node *node)
                     }
                     typ_aux = CreateType_List(node->son->son->sibling->sibling->son);
                     aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
-                    create_entry_Class_Table(node, aux->next);
+                    create_entry_Method_Table(node, aux->next);
                     // printf("%s depois\n", entry_aux->id);
                 }
             }
@@ -141,6 +142,45 @@ Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
         node = node->sibling;
     }
 }
+
+Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node vai ser method decl ou field decl
+    Table_ent *entry;
+    type *parametros = NULL;
+    int count = 0;
+    if(strcmp(node->token,"MethodDecl") ==0){
+        Node * methodBody = node->son->sibling;
+        char *ret = typeChange(node->son->son->token);
+        char *id = "return";
+        entry = insertEntry(ret, NULL, id, 1, NULL);
+        global_table->entry = entry;
+        Node *aux =node->son->son->sibling->sibling;//MethodParams
+        if(aux->son){
+            aux = aux->son;
+            while(aux){
+                ret = typeChange(aux->son->token);
+                id = aux->son->sibling->value;
+                entry->next = insertEntry(ret,NULL,id,0,NULL);
+                entry = entry->next;
+                aux = aux->sibling;
+            }
+        }
+        if(methodBody->son){
+            Node *aux1 = methodBody->son;
+            while(aux1){
+                if(strcmp(aux1->token,"VarDecl") ==0){
+                    ret = typeChange(aux1->son->token);
+                    id = aux1->son->sibling->value;
+                    entry->next = insertEntry(ret,NULL,id,1,NULL);
+                    entry = entry->next;
+                }
+                aux1 = aux1->sibling;
+            }
+        }
+
+    }  
+
+}
+
 
 type *CreateType_List(Node *cabeca)
 {
@@ -248,6 +288,7 @@ void print_Entrys(Table *tab)
         printf("tttttt\n");
     }*/
     // printf("okei\n");
+    
     Table_ent *entry = tab->entry;
     // printf("okei\n");
     if (tab->type == 1)
@@ -304,6 +345,16 @@ void print_Entrys(Table *tab)
     else
     {
 
-        return;
+        while (entry != NULL)
+            {
+        printf("%s\t", entry->id);
+        printf("%s",entry->ret);
+        if(entry->isParam == 0){
+            printf("\tparam\n");
+        }else{
+            printf("\n");
+        }
+        entry = entry->next;
+            }
     }
 } // printar as entrys dependendo se é class ou metodo
