@@ -105,7 +105,7 @@ Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
             /*for(int i = 0; i < sizeof(typeAux);i++){
                 printf("%s TypeAux  ", typeAux[i]);
             }*/
-            parametros = CreateType_List(paramdecl);
+            //parametros = CreateType_List(paramdecl);
 
             entry = insertEntry(tipo, parametros, id, 0, NULL);
             // printf("%s  ", entry->id);
@@ -184,31 +184,34 @@ Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node va
 
 type *CreateType_List(Node *cabeca)
 {
-    int count = 0;
-    type *type_aux = NULL;
+    //int count = 0;
+    type *head = NULL;
+    type *type_aux1 = NULL;
     if (cabeca != NULL) // ParamDecl
     {             
         if(strcmp(cabeca->token,"ParamDecl")==0){     // se o methodParams tem filhos
         for (Node *filho = cabeca; filho != NULL; filho = filho->sibling)
         { // percorre os paramDecl ou o field
-                count ++;
+                //count ++;
             char *t = typeChange(filho->son->token);
-            if (type_aux == NULL){
-                type_aux = createType(t, NULL);
+            if (head == NULL){
+                head = createType(t, NULL);
 
             }else{
-                while (type_aux!=NULL){
-                    type_aux = type_aux->next;
+                type_aux1 = head;
+                while (type_aux1->next != NULL){
+                    type_aux1 = type_aux1->next;
                 }
-                type_aux = createType(t, NULL);
+                type_aux1->next = createType(t, NULL);
             }
             }
+
         }if(strcmp(cabeca->token,"FieldDecl")==0){
             char *t = typeChange(cabeca->son->token);
-            type_aux = createType(t, NULL);
+            head = createType(t, NULL);
         }
     }
-    return type_aux;
+    return head;
 }
 
 char *typeChange(char *aux)
@@ -314,20 +317,21 @@ void print_Entrys(Table *tab)
                 // }
                 // printf("%s   puta \n", entry->typ[2]);
                 type *t_aux = entry->tipo;
-                while (t_aux->tipo && t_aux->next != NULL)
-                {
-                    printf("%s,", t_aux->tipo);
-                    t_aux = t_aux->next;
-                    // printf("%s porrada \n",entry->typ[i+1]);
-                }
-                if (t_aux->tipo)
-                {
-                    printf("%s)", t_aux->tipo);
-                }
-                else
-                {
-                    printf(")");
-                }
+                if(t_aux){
+                    while (t_aux->tipo && t_aux->next != NULL)
+                    {
+                        printf("%s,", t_aux->tipo);
+                        t_aux = t_aux->next;
+                        // printf("%s porrada \n",entry->typ[i+1]);
+                    }
+                    if (t_aux->tipo)
+                    {
+                        printf("%s)", t_aux->tipo);
+                        }
+                    }else
+                    {
+                        printf(")");
+                    }
             }
             if (entry->ret != NULL)
             {
