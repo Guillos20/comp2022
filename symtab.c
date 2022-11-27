@@ -343,15 +343,14 @@ void print_Entrys(Table *tab)
             }
             entry = entry->next;
         }
-        printf("\n");
-        return;
+       
     }
     else
     {
 
         while (entry != NULL)
             {
-        printf("%s\t", entry->id);
+        printf("%s\t\t", entry->id);
         printf("%s",entry->ret);
         if(entry->isParam == 0){
             printf("\tparam\n");
@@ -361,4 +360,6 @@ void print_Entrys(Table *tab)
         entry = entry->next;
             }
     }
+     printf("\n");
+        return;
 } // printar as entrys dependendo se é class ou metodo
