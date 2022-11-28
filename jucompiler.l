@@ -203,6 +203,7 @@ int main(int argc, char** argv){
     error = 1;
     printf("Line %d, col %d: %s: %s\n", linha, col_yacc, s, yytext);
 }
-int yywrap(){
+
+int yywrap() {
     return 1;
 }
