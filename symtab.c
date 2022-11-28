@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "struct.h"
 #include <ctype.h>
-
+//duas variaveis nao podem ter o mesmo nome// e nao pode haver duas funçoes com o mesmo nome e mesma lista de tipos de parametros 
 Table *symtab;
 
 void initTable(Node *node)
