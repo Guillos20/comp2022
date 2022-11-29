@@ -4,19 +4,23 @@
 #include <stdio.h>
 #include "struct.h"
 #include <ctype.h>
-//duas variaveis nao podem ter o mesmo nome// e nao pode haver duas funçoes com o mesmo nome e mesma lista de tipos de parametros 
+//variaveis dentro de funçao com nomes iguais 
 Table *symtab;
+
 
 void initTable(Node *node)
 {
+  
     char *params[8] = {"aiugsdiugha"};
     char *name = node->son->value;
     // printf("===== Class %s Symbol Table =====\n", name);
     symtab = createTable(name, 1, NULL, NULL, NULL);
     Table *aux = symtab;
+    Table_ent * correct_Methods = NULL;
     node = node->son->sibling;
     type *typ_aux = NULL;
     create_entry_Class_Table(node, symtab);
+    //printf("vens aqui ?  \n");
     while (node != NULL)
     { // percorre metodo a metodo ou field decl
         if (strcmp(node->token, "MethodDecl") == 0)
@@ -24,11 +28,21 @@ void initTable(Node *node)
             if (strcmp(node->son->token, "MethodHeader") == 0) // podemos vir a poder tirar isto uma vez que aparece sempre ,acho
             {
                 aux = symtab;
+                char * id = node->son->son->sibling->value;
+                typ_aux = CreateType_List(node->son->son->sibling->sibling->son);
                 if (aux->next == NULL)
                 {
-                    typ_aux = CreateType_List(node->son->son->sibling->sibling->son);
-                    aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
-                    create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
+                    if(compare_methods(correct_Methods, typ_aux,id) == 1){
+                        //printf("guillos  \n");
+                        aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
+                        create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
+                        correct_Methods = addToListEntry( correct_Methods ,NULL, id, typ_aux, 0, NULL);
+                    }else{
+                        //printf("anibal \n");
+                        
+                        
+                    }
+                    
                     
                 }
                 else
@@ -38,9 +52,11 @@ void initTable(Node *node)
                     {
                         aux = aux->next;
                     }
-                    typ_aux = CreateType_List(node->son->son->sibling->sibling->son);
-                    aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
-                    create_entry_Method_Table(node, aux->next);
+                    //verificar metodo
+                   if(compare_methods(correct_Methods, typ_aux,id) == 1){
+                        aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
+                        create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
+                    }
                     // printf("%s depois\n", entry_aux->id);
                 }
             }
@@ -78,69 +94,71 @@ void initTable(Node *node)
 Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
 { // este nó será o method decl ou field decl
     Table_ent *entry;
+    type *temp = NULL;
     type *parametros = NULL;
+    Table_ent * ret_Entry =NULL;
     int count = 0;
     while (node != NULL)
     {
         if (strcmp(node->token, "MethodDecl") == 0)
         {
+            
             Node *paramdecl = node->son->son->sibling->sibling->son;//paramDecl
-            parametros = CreateType_List(paramdecl);
+            parametros = CreateType_List(paramdecl);//adicionar lista de ids
             char *tipo = typeChange(node->son->son->token);
             char *id = node->son->son->sibling->value;
-            // printf("%s\n", paramdecl->token);
-            // if (paramdecl != NULL)
-            // { // se o methodParams tem filhos
-            //     for (Node *filho = paramdecl; filho != NULL; filho = filho->sibling)
-            //     { // percorre os paramDecl
-            //         char *t = malloc(256);
-            //         t = typeChange(filho->son->token);
-            //         // printf("%s olhaaaaa ", t);
-            //         // printf("kkkkkkkkkk %d " , count);
-            //         typeAux[count] = t;
-            //         // printf(" %d   indice ", count);
-            //         count++;
-            //     }
-            // }
-            /*for(int i = 0; i < sizeof(typeAux);i++){
-                printf("%s TypeAux  ", typeAux[i]);
-            }*/
-            //parametros = CreateType_List(paramdecl);
+            if(compare_methods(ret_Entry,parametros,id) == 1 ){
+                entry = insertEntry(tipo, parametros, id, 0, NULL);
 
-            entry = insertEntry(tipo, parametros, id, 0, NULL);
-            // printf("%s  ", entry->id);
-            // count = 0;
-            // bzero(typeAux, sizeof(typeAux));
+                    if (global_table->entry == NULL)
+            {
+
+                global_table->entry = entry;
+            }
+            else
+            {
+
+                Table_ent *entry_aux = global_table->entry;
+                while (entry_aux->next)
+                {
+                    entry_aux = entry_aux->next;
+                }
+                entry_aux->next = entry;
+
+            }
+            ret_Entry = addToListEntry(ret_Entry ,tipo, id, parametros, 0, NULL);
+            }
+
         }
         if (strcmp(node->token, "FieldDecl") == 0)
         {
 
-            parametros = CreateType_List(node);
             char *id = node->son->sibling->value;
-            entry = insertEntry(NULL, parametros, id, 1, NULL);
-            // bzero(typeAux, sizeof(typeAux));
-        }
-        // printf("welelle  ");
-        if (global_table->entry == NULL)
+            if(Compare_Lists(temp,id) == 1 ){
+                temp = addToList(temp,id);
+                parametros = CreateType_List(node);
+                entry = insertEntry(NULL, parametros, id, 1, NULL);
+
+
+                if (global_table->entry == NULL)
         {
-            // printf("GIULLOS  ");
             global_table->entry = entry;
         }
         else
         {
-            // printf("anibau  ");
             Table_ent *entry_aux = global_table->entry;
             while (entry_aux->next)
             {
-
-                // printf("%s  opa \n", entry_aux->id);
                 entry_aux = entry_aux->next;
             }
             entry_aux->next = entry;
-            // printf("%s depois\n", entry_aux->id);
         }
+        }
+        }
+        
         node = node->sibling;
     }
+    
 }
 
 Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node vai ser method decl ou field decl
@@ -181,6 +199,146 @@ Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node va
 
 }
 
+int compare_methods(Table_ent * list, type *param,char * id){
+    if(list == NULL){
+        return 1; // esta tudo correto
+    }else{
+        Table_ent *aux = list;
+        while(aux){
+            if(strcmp(id,aux->id) == 0 && compare_params(aux->tipo,param) == 0){
+                return 0; //ignorar aquele metodo
+            }
+
+            aux = aux->next;
+        }
+        return 1;// esta correto 
+    }
+}
+
+int compare_params(type* param, type* p){
+    if(param == NULL || p == NULL){
+        return 1; // tudo correto
+    }else{
+        int count = 0;
+        type * aux = param;
+        type * aux1 = p;
+        while(aux && aux1){
+            if(strcmp(aux->tipo,aux1->tipo) == 0){
+                count = 1;
+            }
+            if(strcmp(aux->tipo,aux1->tipo) == 1){
+                count = 0;
+                return 1; // tudo correto 
+            }
+            if(aux->next == NULL && aux1->next== NULL){
+                return 0; // errado
+            }
+            aux = aux->next;
+            aux1 = aux1->next;
+        }
+        return 1;//tudo correto
+    }
+}
+
+int List_check(type *list){// adicionar a lista de ids 
+
+    if (list == NULL){
+        return 1;//nao há repetidos
+    }else{
+        type *aux = list;
+        while(aux->next != NULL){
+        type *aux1 = aux->next;
+        while(aux1 != NULL){
+            if(strcmp(aux->tipo,aux1->tipo) == 0){
+                return 0;//existe repetidos
+            }
+            aux1 = aux1->next;
+        }
+        aux = aux->next;
+    }
+     return 1; // nao há repetidos   
+    }
+}
+
+int Compare_Lists(type *t, char *tipo){
+    if(t == NULL){
+        return 1; //nao existe;
+    }
+    else{
+        type *aux = t;
+        while(aux->next != NULL){
+            if(strcmp(aux->tipo,tipo) == 0){
+                return 0;//já existe 
+            }
+            aux = aux->next;
+        }
+        if(strcmp(aux->tipo,tipo) == 0){
+            return 0;// já existe
+        }else{
+            return 1;// nao existe ;
+        }
+    }
+}
+
+
+type * addToList(type *list, char * t){
+    type* head = list;
+    type* aux = NULL;
+    if(head == NULL){
+       head = createType(t,NULL);
+    }else{
+        aux = head;
+       while(aux->next != NULL){
+        aux = aux->next;
+       } 
+       aux->tipo = t;
+    }
+    return head;
+}
+
+Table_ent * addToListEntry(Table_ent * list ,char* ret, char* id, type *tipo, int isParam, Table_ent *next){
+    Table_ent *head = list;
+    Table_ent *aux = NULL;
+    if(head == NULL){
+        head = insertEntry(ret,tipo,id,isParam, next);
+    }else{
+        aux  = head;
+        while(aux->next != NULL){
+            aux = aux->next;
+        }
+        aux->next = insertEntry(ret,tipo,id,isParam,next);
+    }
+    return head;
+}
+
+type *CreateId_List(Node *cabeca)
+{
+    //int count = 0;
+    type *head = NULL;
+    type *type_aux1 = NULL;
+    if (cabeca != NULL) // ParamDecl
+    {             
+        if(strcmp(cabeca->token,"ParamDecl")==0){     // se o methodParams tem filhos
+        for (Node *filho = cabeca; filho != NULL; filho = filho->sibling)
+        { // percorre os paramDecl ou o field
+                //count ++;
+            char *t = filho->son->sibling->value;
+            if (head == NULL){
+                head = createType(t, NULL);
+
+            }else{
+                type_aux1 = head;
+                while (type_aux1->next != NULL){
+                    type_aux1 = type_aux1->next;
+                }
+                type_aux1->next = createType(t, NULL);
+            }
+            }
+
+        }
+    }
+    return head;
+}
 
 type *CreateType_List(Node *cabeca)
 {
