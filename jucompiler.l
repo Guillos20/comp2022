@@ -195,6 +195,11 @@ int main(int argc, char** argv){
             print_Table(symtab);
             print_tree(root, 0);
             
+        }else{
+            fc = 1;
+            yylex();
+            yyparse();
+
         }
        
     }

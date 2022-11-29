@@ -460,9 +460,7 @@ void print_Entrys(Table *tab)
     {
         while (entry != NULL)
         {
-            // printf("jordao \n");
             printf("%s\t", entry->id); // print ID
-            // printf("burro\n");
             if (entry->isParam == 1)
             {
                 printf("%s", entry->tipo->tipo);
@@ -475,7 +473,6 @@ void print_Entrys(Table *tab)
                 printf("(");
                 // if (entry->typ[2] != NULL)
                 // {
-                //     printf("CONAAAA");
                 // }
                 // printf("%s   puta \n", entry->typ[2]);
                 type *t_aux = entry->tipo;
@@ -523,5 +520,4 @@ void print_Entrys(Table *tab)
             }
     }
      printf("\n");
-        return;
 } // printar as entrys dependendo se é class ou metodo

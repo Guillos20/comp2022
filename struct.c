@@ -152,5 +152,35 @@ void print_tree(Node *node, int num)
     }
 }
 void print_anotated_tree(Node *node, int num){
+    if (node == NULL)
+    {
+        return;
+    }
+    for (int i = 0; i < num; i++)
+    {
+        printf("..");
+    }
+    if (node->value != NULL)
+    {
+        printf("%s(%s)\n", node->token, node->value);
+    }
+    else
+    {
+
+        printf("%s\n", node->token);
+    }
+    if(node->type != NULL){
+        printf("- %s", node->type);
+    }
+
+    if (node->son != NULL)
+    {
+        print_tree(node->son, num + 1);
+    }
+
+    if (node->sibling != NULL)
+    {
+        print_tree(node->sibling, num);
+    }
 
 };
