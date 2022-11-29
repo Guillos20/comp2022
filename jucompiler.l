@@ -1,5 +1,4 @@
 %{
- //bash test.sh ./run para correr tudo estando os testes na pasta em questao, na meta 1 era meta1
  //Anibal Rodrigues 2019224911 
  //Guilherme Junqueira 2019221958 
     #include <ctype.h>
@@ -193,10 +192,10 @@ int main(int argc, char** argv){
             yyparse();
             initTable(root);
             print_Table(symtab);
-            print_tree(root, 0);
+            print_anotated_tree(root, 0);
             
         }else{
-            fc = 1;
+            fc = 3;
             yylex();
             yyparse();
 

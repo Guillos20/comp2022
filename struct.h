@@ -39,14 +39,16 @@ typedef struct type
 typedef enum {integer, string, doub, boolean, undef} basic_type;
 
 Node *root;
-
-void print_tree(Node *node, int num);
-
 Node *createNode(char *token, char *value, Node *son, Node *sibling);
-void print_tree(Node *root, int num);
-void save_type(Node *first, Node *type);
 Node *add_sibling(Node * someone, Node * sibling);
 Node *add_son(Node * parent, Node * son);
+void save_type(Node *first, Node *type);
+
+
+void print_tree(Node *node, int num);
+void print_anotated_tree(Node *node, int num);
+
+
 Table *createTable(char* id, int typical, struct type *t, struct Table *next, struct Table_ent *entry);
 Table_ent *insertEntry(char *ret, struct type *t, char *id, int isParam , struct Table_ent *next);
 type *createType(char* tipo, type *next);

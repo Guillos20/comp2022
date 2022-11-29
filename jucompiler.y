@@ -46,7 +46,7 @@
 Program: CLASS ID LBRACE DeclMult RBRACE          {$$ = root = createNode("Program",NULL,createNode("Id",$2,NULL,$4),NULL);}   
 ;
 
-DeclMult:  MethodDecl DeclMult                    {if($1 != NULL){$$ = $1; if($2 != NULL){add_sibling($1, $2);};}else{$$=NULL;};} //not sur
+DeclMult:  MethodDecl DeclMult                    {if($1 != NULL){$$ = $1; if($2 != NULL){add_sibling($1, $2);};}else{$$=NULL;};} 
         |  FieldDecl  DeclMult                    {if($1 != NULL){$$ = $1; if($2 != NULL){add_sibling($1, $2);};}else{$$=NULL;};}
         |  SEMICOLON  DeclMult                    {if($2 != NULL){$$ = $2;}else{$$=NULL;};} 
         |                                         {$$ = NULL;}
@@ -68,7 +68,7 @@ Type: BOOL                                        {$$ = createNode("Bool",NULL,N
     | DOUBLE                                      {$$ = createNode("Double",NULL,NULL,NULL);}
 ;
 
-MethodHeader: Type ID LPAR FormalParams RPAR      {$$ = $1;$1->sibling = createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL));} //fix type issue
+MethodHeader: Type ID LPAR FormalParams RPAR      {$$ = $1;$1->sibling = createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL));} 
             | Type ID LPAR RPAR                   {$$ = $1;$1->sibling = createNode("Id",$2,NULL,createNode("MethodParams",NULL,NULL,NULL));}
             | VOID ID LPAR FormalParams RPAR      {$$ = createNode("Void",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,$4,NULL)));}
             | VOID ID LPAR RPAR                   {$$ = createNode("Void",NULL,NULL,createNode("Id",$2,NULL,createNode("MethodParams",NULL,NULL,NULL)));}
@@ -86,7 +86,7 @@ COMTYPID:  COMMA Type ID COMTYPID                 {$$ = createNode("ParamDecl",N
 MethodBody: LBRACE BODY RBRACE                    {$$ = $2;}
 ;
 
-BODY:Statement BODY                               {if($1 != NULL){ $$ = $1;if($2 != NULL){add_sibling($1,$2);}}else if($1==NULL){$$=$2;}else{$$ = NULL;};}   //body is no bueno aswell
+BODY:Statement BODY                               {if($1 != NULL){ $$ = $1;if($2 != NULL){add_sibling($1,$2);}}else if($1==NULL){$$=$2;}else{$$ = NULL;};}   
     | VarDecl BODY                                {if($1 != NULL){ $$ = $1;if($2 != NULL){add_sibling($1,$2);}}else if($1==NULL){$$=$2;}else{$$ = NULL;};}
     |                                             {$$ = NULL;}
 ;

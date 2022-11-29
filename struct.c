@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "struct.h"
+// bash test.sh ./run para correr tudo estando os testes na pasta em questao, na meta 1 era meta1
 
 Node *createNode(char *token, char *value, Node *son, Node *sibling)
 {
@@ -44,7 +45,8 @@ Table_ent *insertEntry(char *ret, struct type *t, char *id, int isParam, struct 
     return ent;
 }
 
-type *createType(char *tipo, type * next){
+type *createType(char *tipo, type *next)
+{
     type *t = malloc(sizeof(type));
     t->tipo = tipo;
     t->next = next;
@@ -151,7 +153,8 @@ void print_tree(Node *node, int num)
         print_tree(node->sibling, num);
     }
 }
-void print_anotated_tree(Node *node, int num){
+void print_anotated_tree(Node *node, int num)
+{
     if (node == NULL)
     {
         return;
@@ -162,25 +165,39 @@ void print_anotated_tree(Node *node, int num){
     }
     if (node->value != NULL)
     {
-        printf("%s(%s)\n", node->token, node->value);
+
+        printf("%s(%s)", node->token, node->value);
+        if (node->type != NULL)
+        {
+            printf("- %s\n", node->type);
+        }
+        else
+        {
+            printf("\n");
+        }
     }
     else
     {
 
-        printf("%s\n", node->token);
-    }
-    if(node->type != NULL){
-        printf("- %s", node->type);
+        printf("%s", node->token);
+        if (node->type != NULL)
+        {
+            printf("- %s\n", node->type);
+        }
+        else
+        {
+            printf("\n");
+        }
     }
 
     if (node->son != NULL)
     {
-        print_tree(node->son, num + 1);
+        print_anotated_tree(node->son, num + 1);
     }
 
     if (node->sibling != NULL)
     {
-        print_tree(node->sibling, num);
+        print_anotated_tree(node->sibling, num);
     }
 
 };

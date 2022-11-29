@@ -410,7 +410,6 @@ void print_Table(Table *start)
             char *name = aux->id;
             printf("===== Class %s Symbol Table =====\n", name);
             print_Entrys(aux);
-            // printf("sai lololololol 132\n");
         }
         if (aux->type == 2)
         {
@@ -446,16 +445,7 @@ void print_Table(Table *start)
 
 void print_Entrys(Table *tab)
 {
-    // printf("entrei lololololl\n");
-    /*if(tab->entry != NULL){
-        printf("pppppp\n");
-    }else{
-        printf("tttttt\n");
-    }*/
-    // printf("okei\n");
-    
     Table_ent *entry = tab->entry;
-    // printf("okei\n");
     if (tab->type == 1)
     {
         while (entry != NULL)
@@ -463,7 +453,7 @@ void print_Entrys(Table *tab)
             printf("%s\t", entry->id); // print ID
             if (entry->isParam == 1)
             {
-                printf("%s", entry->tipo->tipo);
+                printf("%s\t", entry->tipo->tipo);
                 // printf("guilherme\n");
             }
             if (entry->isParam == 0)
