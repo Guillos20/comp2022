@@ -200,4 +200,11 @@ void print_anotated_tree(Node *node, int num)
         print_anotated_tree(node->sibling, num);
     }
 
+}
+void anotate_that_tree(Node *node){
+    while(node){
+        while(node->sibling){
+            anotate_that_tree(node->sibling);
+        }
+    }
 };

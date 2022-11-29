@@ -11,7 +11,6 @@ Table *symtab;
 void initTable(Node *node)
 {
   
-    char *params[8] = {"aiugsdiugha"};
     char *name = node->son->value;
     // printf("===== Class %s Symbol Table =====\n", name);
     symtab = createTable(name, 1, NULL, NULL, NULL);
@@ -33,7 +32,7 @@ void initTable(Node *node)
                 if (aux->next == NULL)
                 {
                     if(compare_methods(correct_Methods, typ_aux,id) == 1){
-                        printf("guillos %s  \n",id);
+                        //printf("guillos %s  \n",id);
                         aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
                         create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
                         correct_Methods = addToListEntry( correct_Methods ,NULL, id, typ_aux, 0, NULL);
@@ -54,7 +53,7 @@ void initTable(Node *node)
                     }
                     //verificar metodo
                    if(compare_methods(correct_Methods, typ_aux,id) == 1){
-                        printf("guillos1 %s  \n",id);
+                       // printf("guillos1 %s  \n",id);
                         aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
                         create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
                         correct_Methods = addToListEntry( correct_Methods ,NULL, id, typ_aux, 0, NULL);
@@ -436,7 +435,7 @@ void print_Entrys(Table *tab)
             printf("%s\t", entry->id); // print ID
             if (entry->isParam == 1)
             {
-                printf("\t%s\t", entry->tipo->tipo);
+                printf("\t%s", entry->tipo->tipo);
                 // printf("guilherme\n");
             }
             if (entry->isParam == 0)
@@ -444,17 +443,12 @@ void print_Entrys(Table *tab)
 
                 int i = 0;
                 printf("(");
-                // if (entry->typ[2] != NULL)
-                // {
-                // }
-                // printf("%s   puta \n", entry->typ[2]);
                 type *t_aux = entry->tipo;
                 if(t_aux){
                     while (t_aux->tipo && t_aux->next != NULL)
                     {
                         printf("%s,", t_aux->tipo);
                         t_aux = t_aux->next;
-                        // printf("%s porrada \n",entry->typ[i+1]);
                     }
                     if (t_aux->tipo)
                     {
