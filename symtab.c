@@ -33,7 +33,7 @@ void initTable(Node *node)
                 if (aux->next == NULL)
                 {
                     if(compare_methods(correct_Methods, typ_aux,id) == 1){
-                        //printf("guillos  \n");
+                        printf("guillos %s  \n",id);
                         aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
                         create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
                         correct_Methods = addToListEntry( correct_Methods ,NULL, id, typ_aux, 0, NULL);
@@ -54,37 +54,16 @@ void initTable(Node *node)
                     }
                     //verificar metodo
                    if(compare_methods(correct_Methods, typ_aux,id) == 1){
+                        printf("guillos1 %s  \n",id);
                         aux->next = createTable(node->son->son->sibling->value, 2, typ_aux, NULL, NULL);
                         create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
+                        correct_Methods = addToListEntry( correct_Methods ,NULL, id, typ_aux, 0, NULL);
                     }
                     // printf("%s depois\n", entry_aux->id);
                 }
             }
         }
-        /*if (strcmp(node->token, "FieldDecl") == 0)
-        {
-            aux = symtab;
-            if (aux->next == NULL){
-        //printf("GIULLOS  ");
-                    aux->next = createTable(node->son->son->sibling->value, 2, params, NULL, NULL);
-                    create_entry_Class_Table(node, aux->next);
-                }
-                else
-                {
-                    //printf("anibau  ");
-                    aux = aux->next;
-                    while (aux->next){
-                            aux = aux->next;
-            //printf("%s  opa \n", entry_aux->id);
-                        }
-                aux = createTable(node->son->son->sibling->value, 2, params, NULL, NULL);
-                create_entry_Class_Table(node, aux->next);
-        // printf("%s depois\n", entry_aux->id);
-    }
-            symtab->next = createTable("entrou2", 1, NULL, NULL, NULL);
-            create_entry_Class_Table(node, symtab);
-            // symtab = symtab->next;
-        }*/
+        
         node = node->sibling;
     }
 }
@@ -104,7 +83,7 @@ Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
         {
             
             Node *paramdecl = node->son->son->sibling->sibling->son;//paramDecl
-            parametros = CreateType_List(paramdecl);//adicionar lista de ids
+            parametros = CreateType_List(paramdecl);
             char *tipo = typeChange(node->son->son->token);
             char *id = node->son->son->sibling->value;
             if(compare_methods(ret_Entry,parametros,id) == 1 ){
@@ -164,6 +143,7 @@ Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
 Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node vai ser method decl ou field decl
     Table_ent *entry;
     type *parametros = NULL;
+    type *id_list = NULL;
     int count = 0;
     if(strcmp(node->token,"MethodDecl") ==0){
         Node * methodBody = node->son->sibling;
@@ -172,13 +152,18 @@ Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node va
         entry = insertEntry(ret, NULL, id, 1, NULL);
         global_table->entry = entry;
         Node *aux =node->son->son->sibling->sibling;//MethodParams
+        type * vars1 = NULL;
         if(aux->son){
             aux = aux->son;
             while(aux){
-                ret = typeChange(aux->son->token);
                 id = aux->son->sibling->value;
-                entry->next = insertEntry(ret,NULL,id,0,NULL);
-                entry = entry->next;
+                if(Compare_Lists(id_list,id) == 1){
+                    ret = typeChange(aux->son->token);
+                    entry->next = insertEntry(ret,NULL,id,0,NULL);
+                    entry = entry->next;
+                    id_list = addToList(id_list,id);
+                }
+                
                 aux = aux->sibling;
             }
         }
@@ -189,10 +174,12 @@ Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node va
                 if(strcmp(aux1->token,"VarDecl") ==0){
                     ret = typeChange(aux1->son->token);
                     id = aux1->son->sibling->value;
-                    if(Compare_Lists(vars,id) == 1){
+
+
+                    if(Compare_Lists(id_list,id) == 1){
                         entry->next = insertEntry(ret,NULL,id,1,NULL);
                         entry = entry->next;
-                        vars = addToList(vars, id);
+                        id_list = addToList(id_list, id);
                     }
                 }
                 aux1 = aux1->sibling;
@@ -227,14 +214,10 @@ int compare_params(type* param, type* p){
         type * aux = param;
         type * aux1 = p;
         while(aux && aux1){
-            if(strcmp(aux->tipo,aux1->tipo) == 0){
-                count = 1;
-            }
-            if(strcmp(aux->tipo,aux1->tipo) == 1){
-                count = 0;
+            if(strcmp(aux->tipo,aux1->tipo) != 0){
                 return 1; // tudo correto 
             }
-            if(aux->next == NULL && aux1->next== NULL){
+            if(aux->next == NULL && aux1->next== NULL && strcmp(aux->tipo,aux1->tipo) == 0){
                 return 0; // errado
             }
             aux = aux->next;
@@ -295,7 +278,7 @@ type * addToList(type *list, char * t){
        while(aux->next != NULL){
         aux = aux->next;
        } 
-       aux->tipo = t;
+       aux->next=createType(t,NULL);
     }
     return head;
 }
@@ -453,7 +436,7 @@ void print_Entrys(Table *tab)
             printf("%s\t", entry->id); // print ID
             if (entry->isParam == 1)
             {
-                printf("%s\t", entry->tipo->tipo);
+                printf("\t%s\t", entry->tipo->tipo);
                 // printf("guilherme\n");
             }
             if (entry->isParam == 0)
