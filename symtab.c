@@ -184,12 +184,16 @@ Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node va
         }
         if(methodBody->son){
             Node *aux1 = methodBody->son;
+            type * vars = NULL;
             while(aux1){
                 if(strcmp(aux1->token,"VarDecl") ==0){
                     ret = typeChange(aux1->son->token);
                     id = aux1->son->sibling->value;
-                    entry->next = insertEntry(ret,NULL,id,1,NULL);
-                    entry = entry->next;
+                    if(Compare_Lists(vars,id) == 1){
+                        entry->next = insertEntry(ret,NULL,id,1,NULL);
+                        entry = entry->next;
+                        vars = addToList(vars, id);
+                    }
                 }
                 aux1 = aux1->sibling;
             }
