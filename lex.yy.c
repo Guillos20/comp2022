@@ -2541,6 +2541,7 @@ int main(int argc, char** argv){
             yyparse();
             initTable(root);
             print_Table(symtab);
+            anotate_that_tree(root);
             print_anotated_tree(root, 0);
             
         }else{

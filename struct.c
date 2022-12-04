@@ -3,7 +3,7 @@
 #include <string.h>
 #include "struct.h"
 // bash test.sh ./run para correr tudo estando os testes na pasta em questao, na meta 1 era meta1
-
+extern Table *symtab;
 Node *createNode(char *token, char *value, Node *son, Node *sibling)
 {
     Node *n = (Node *)malloc(sizeof(Node));
@@ -169,7 +169,7 @@ void print_anotated_tree(Node *node, int num)
         printf("%s(%s)", node->token, node->value);
         if (node->type != NULL)
         {
-            printf("- %s\n", node->type);
+            printf(" - %s\n", node->type);
         }
         else
         {
@@ -182,7 +182,7 @@ void print_anotated_tree(Node *node, int num)
         printf("%s", node->token);
         if (node->type != NULL)
         {
-            printf("- %s\n", node->type);
+            printf(" - %s\n", node->type);
         }
         else
         {
@@ -199,12 +199,272 @@ void print_anotated_tree(Node *node, int num)
     {
         print_anotated_tree(node->sibling, num);
     }
-
 }
-void anotate_that_tree(Node *node){
-    while(node){
-        while(node->sibling){
+
+char *get_type_entry(char *id, Table *tab)
+{
+
+    Table_ent *tab_ent = tab->entry;
+    while (tab_ent)
+    {
+        printf("%s\n", tab_ent->id);
+        if (strcmp(tab_ent->id, id) == 0)
+        {
+            if (tab->type == 1)
+            {
+                if (tab_ent->tipo)
+                {
+                    printf("tipo-------%s\n", tab_ent->tipo->tipo);
+
+                    return tab_ent->tipo->tipo;
+                }
+                else
+                {
+                    return "()";
+                }
+            }
+            else
+            {
+                printf("ret-------%s\n", tab_ent->ret);
+                return tab_ent->ret;
+            }
+        }
+        else
+        {
+            tab_ent = tab_ent->next;
+        }
+    }
+    get_type_entry(id, tab->next);
+}
+type *get_type_func(char *id, Table *tab)
+{
+    Table_ent *tab_ent = tab->entry;
+    while (tab_ent)
+    {
+        // printf("%s\n", tab_ent->id);
+        if (strcmp(tab_ent->id, id) == 0)
+        {
+
+            return tab_ent->tipo;
+        }
+        else
+        {
+            tab_ent = tab_ent->next;
+        }
+    }
+}
+void anotate_that_tree(Node *node)
+{
+    if (node)
+    {
+        if (strcmp(node->token, "Assign") == 0)
+        {
+            //need to add Lshift and Rshift in this func
+            Node *son = node->son;
+
+            if (strcmp(son->token, "Id") == 0)
+            {
+                son->type = get_type_entry(son->value, symtab);
+            }
+            node->type = son->type;
+            if (strcmp(son->sibling->token, "Id") == 0)
+            {
+                son->sibling->type = get_type_entry(son->sibling->value, symtab);
+            }//what if not an id?
+        }
+        if (strcmp(node->token, "Xor") == 0 || strcmp(node->token, "Or") == 0)
+        {
+            if (strcmp(node->son->token, "Not") == 0)
+            {
+                if (strcmp(node->son->son->token, "BoolLit") == 0)
+                {
+                    node->type = "boolean";
+                }
+                else
+                {
+                    node->son->son->type = get_type_entry(node->son->son->value, symtab);
+                    node->son->type = "boolean";
+                    node->type = "boolean";
+                }
+            }
+            if (strcmp(node->son->token, "BoolLit") == 0)
+            {
+                node->type = "boolean";
+            }
+
+            if (strcmp(node->son->token, "DecLit") == 0)
+            {
+                node->type = "int";
+            }
+            else if (strcmp(node->son->token, "RealLit") == 0)
+            {
+                node->type = "undef";
+            }
+            else
+            {
+                node->type = "boolean";
+            }
+        }
+        if (strcmp(node->token, "Add") == 0 || strcmp(node->token, "Sub") == 0 || strcmp(node->token, "Mul") == 0 || strcmp(node->token, "Div") == 0 || strcmp(node->token, "Mod") == 0)
+        {
+            if (strcmp(node->son->token, "Id") == 0)
+            {
+                node->son->type = get_type_entry(node->son->value, symtab);
+            }
+            if (strcmp(node->son->sibling->token, "Id") == 0)
+            {
+                node->son->sibling->type = get_type_entry(node->son->sibling->value, symtab);
+            }
+            if (strcmp(node->son->token, "DecLit") == 0)
+            {
+                node->son->type = "int";
+            }
+            if (strcmp(node->son->token, "RealLit") == 0)
+            {
+                node->son->type = "double";
+            }
+            if (strcmp(node->son->token, "StrLit") == 0)
+            {
+                node->son->type = "String[]";
+            }
+            if (strcmp(node->son->sibling->token, "DecLit") == 0)
+            {
+                node->son->sibling->type = "int";
+            }
+            if (strcmp(node->son->sibling->token, "RealLit") == 0)
+            {
+                node->son->sibling->type = "double";
+            }
+            if (strcmp(node->son->sibling->token, "StrLit") == 0)
+            {
+                node->son->sibling->type = "String[]";
+            }
+             if (strcmp(node->son->type, "double") == 0 || strcmp(node->son->sibling->type, "double") == 0)
+            {
+                node->type = "double";
+            }
+            if (strcmp(node->son->type, "int") == 0 && strcmp(node->son->sibling->type, "int") == 0)
+            {
+                node->type = "int";
+            }
+            if (strcmp(node->son->type, "boolean") == 0 || strcmp(node->son->type, "String[]") == 0 || strcmp(node->son->sibling->type, "boolean") == 0 || strcmp(node->son->sibling->type, "String[]") == 0)
+            {
+                node->type = "undef";
+            }
+           
+        }
+        if (strcmp(node->token, "DecLit") == 0 || strcmp(node->token, "Length") == 0)
+
+        {
+            node->type = "int";
+            if (node->son)
+            {
+                node->son->type = get_type_entry(node->son->value, symtab);
+            }
+        }
+        if (strcmp(node->token, "RealLit") == 0)
+        {
+            node->type = "double";
+        }
+        if (strcmp(node->token, "StrLit") == 0)
+        {
+            node->type = "String[]";
+        }
+        if (strcmp(node->token, "Lt") == 0 || strcmp(node->token, "Gt") == 0 || strcmp(node->token, "Eq") == 0 || strcmp(node->token, "Ne") == 0 || strcmp(node->token, "Le") == 0 || strcmp(node->token, "Ge") == 0 || strcmp(node->token, "BoolLit") == 0 || (strcmp(node->token, "Not") == 0) || (strcmp(node->token, "And") == 0))
+        {
+            node->type = "boolean";
+            if (node->son)
+            {
+                if (strcmp(node->son->token, "Id") == 0)
+                {
+                    node->son->type = get_type_entry(node->son->value, symtab);
+                }
+                if (node->son->sibling)
+                {
+                    if (strcmp(node->son->sibling->token, "Id") == 0)
+                    {
+                        node->son->sibling->type = get_type_entry(node->son->sibling->value, symtab);
+                    }
+                }
+            }
+        }
+        if (strcmp(node->token, "Minus") == 0 || (strcmp(node->token, "Plus") == 0))
+        {
+            if (strcmp(node->son->token, "DecLit") == 0)
+
+            {
+                node->son->type = "int";
+                node->type = "int";
+            }
+            if (strcmp(node->son->token, "RealLit") == 0)
+            {
+                node->son->type = "double";
+                node->type = "double";
+            }
+            if (strcmp(node->son->token, "BoolLit") == 0)
+            {
+                node->son->type = "boolean";
+                node->type = "undef";
+            }
+            // node->son->type = get_type_entry(node->son->value, symtab);
+            //node->type = node->son->type;
+            // if (strcmp(node->son->type, "boolean") == 0 || strcmp(node->son->type, "undef") == 0)
+            // {
+            // }else{
+
+            // }
+        }
+        if (strcmp(node->token, "ParseArgs") == 0)
+        {
+            node->type = "int";
+            if (strcmp(node->son->token, "Id") == 0)
+            {
+                node->son->type = get_type_entry(node->son->value, symtab);
+            }
+        }
+        if (strcmp(node->token, "Print") == 0)
+        {
+            node->son->type = get_type_entry(node->son->value, symtab);
+        }
+        if (strcmp(node->token, "If") == 0 || strcmp(node->token, "While") == 0)
+        {
+            if (strcmp(node->son->token, "Id") == 0)
+            {
+                node->son->type = get_type_entry(node->son->value, symtab);
+            }
+        }
+        if (strcmp(node->token, "Call") == 0)
+        {
+            type *str = malloc(sizeof(type));
+            // str = get_type_func(node->son->value, symtab);
+            int i = 0;
+            // char *list = "(";
+            // while(str){
+            //     strcat(list, str->tipo);
+            //     str = str->next;
+            // }
+            // strcat(list, ")");
+            // node->son->type = list;
+            // printf("%s      %d\n", str->tipo, i);
+        }
+        if (strcmp(node->token, "While") == 0)
+        {
+            if (strcmp(node->son->token, "Lshift") == 0 || strcmp(node->son->token, "Lshift") == 0)
+            {
+            }
+        }
+        if (node->son != NULL)
+        {
+            anotate_that_tree(node->son);
+        }
+
+        if (node->sibling != NULL)
+        {
             anotate_that_tree(node->sibling);
         }
+    }
+    else
+    {
+        return;
     }
 };
