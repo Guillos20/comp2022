@@ -48,7 +48,7 @@ void save_type(Node *first, Node *type);
 void print_tree(Node *node, int num);
 void print_anotated_tree(Node *node, int num);
 void anotate_that_tree(Node *node);
-char *get_type_entry(char *id, Table *tab);
+char *get_type_entry(char *id, Table *tab, char *func);
 type *get_type_func(char *id, Table *tab);
 
 Table *createTable(char* id, int typical, struct type *t, struct Table *next, struct Table_ent *entry);
