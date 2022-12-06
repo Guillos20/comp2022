@@ -202,14 +202,14 @@ void print_anotated_tree(Node *node, int num)
     }
 }
 
-char *get_type_entry(char *id, Table *tab)
+char *get_type_entry(char *id, Table *tab, char* func)
 {
 
     Table_ent *tab_ent = tab->entry;
     while (tab_ent)
     {
         // printf("%s\n", tab_ent->id);
-        if (strcmp(tab_ent->id, id) == 0)
+        if (strcmp(tab_ent->id, id) == 0 && strcmp(tab->id, func)==0)
         {
             if (tab->type == 1)
             {
@@ -237,7 +237,7 @@ char *get_type_entry(char *id, Table *tab)
     }
     if (tab->next)
     {
-        get_type_entry(id, tab->next);
+        get_type_entry(id, tab->next, func);
     }
     else
     {
@@ -483,7 +483,7 @@ void anotate_that_tree(Node *node)
                 node->son->type = get_type_entry(node->son->value, symtab);
             }
         }
-        /*if (strcmp(node->token, "Call") == 0)
+        if (strcmp(node->token, "Call") == 0)
         {
             char string[100] = "";
             int correct = 0;
@@ -525,7 +525,7 @@ void anotate_that_tree(Node *node)
 
             while (aux && str)
             {
-                if (strcmp(aux->type, "double") == 0)
+                if (strcmp(str->tipo, "double") == 0)
                 {
                     if (strcmp(str->tipo, "double") == 0 || strcmp(str->tipo, "int") == 0)
                     {
@@ -540,17 +540,17 @@ void anotate_that_tree(Node *node)
 
                     // printf("%s\t%s\n", aux->type, str->tipo);
                 }
-                // else
-                // {
-                //     correct += 1;
+                else
+                {
+                    correct += 1;
 
-                // }
-                printf("Entrou %s\t%s\n", aux->type, str->tipo);
+                }
+                //printf("Entrou:%s\t %s\t%s\n",node->son->value, aux->type, str->tipo);
 
                 aux = aux->sibling;
                 str = str->next;
             }
-            printf("%d\n", correct);
+            //printf("%d\n", correct);
             if (correct != 0)
             {
                 node->type = "undef";
@@ -562,7 +562,7 @@ void anotate_that_tree(Node *node)
                 node->type = ret;
             }
         }
-        */
+        
         if (strcmp(node->token, "Lshift") == 0 || strcmp(node->token, "Rshift") == 0)
         {
             if (strcmp(node->son->token, "Id") == 0)
@@ -591,12 +591,14 @@ void anotate_that_tree(Node *node)
             }
         }
         if (strcmp(node->token, "Return") == 0)
-        {if(node->son){
-            if (strcmp(node->son->token, "Id") == 0)
+        {
+            if (node->son)
             {
-                node->son->type = get_type_entry(node->son->value, symtab);
+                if (strcmp(node->son->token, "Id") == 0)
+                {
+                    node->son->type = get_type_entry(node->son->value, symtab);
+                }
             }
-        }
         }
 
         if (node->son != NULL)
