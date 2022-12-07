@@ -10,6 +10,9 @@ elif [ "$1" = "-e2" ]; then
 elif [ "$1" = "-s" ]; then
     path=meta3
     flag="-s"
+elif [ "$1" = "-se" ]; then
+    path=meta3_semErros
+    flag="-s"
 else 
     path=meta4
 fi

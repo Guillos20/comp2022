@@ -37,7 +37,7 @@ void initTable(Node *node)
                         create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
                         correct_Methods = addToListEntry( correct_Methods ,NULL, id, typ_aux, 0, NULL);
                     }else{
-                        //printf("anibal \n");
+                        // printf("YEET%s already defined \n",id);
                         
                         
                     }
@@ -58,7 +58,7 @@ void initTable(Node *node)
                         create_entry_Method_Table(node, aux->next);//o node aqui vai ser igual ao de cima
                         correct_Methods = addToListEntry( correct_Methods ,NULL, id, typ_aux, 0, NULL);
                     }
-                    // printf("%s depois\n", entry_aux->id);
+                    // printf("%s depois\n", aux->id);
                 }
             }
         }
