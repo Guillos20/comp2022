@@ -72,7 +72,7 @@ void initTable(Node *node)
 Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
 { // este nó será o method decl ou field decl
     Table_ent *entry;
-    type *temp = NULL;
+    type *temp = createType("_",NULL);
     type *parametros = NULL;
     Table_ent * ret_Entry =NULL;
     int count = 0;
@@ -142,7 +142,7 @@ Table_ent *create_entry_Class_Table(Node *node, Table *global_table)
 Table_ent *create_entry_Method_Table(Node *node, Table *global_table){// node vai ser method decl ou field decl
     Table_ent *entry;
     type *parametros = NULL;
-    type *id_list = NULL;
+    type *id_list = createType("_",NULL);
     int count = 0;
     if(strcmp(node->token,"MethodDecl") ==0){
         Node * methodBody = node->son->sibling;
@@ -195,7 +195,7 @@ int compare_methods(Table_ent * list, type *param,char * id){
     }else{
         Table_ent *aux = list;
         while(aux){
-            if(strcmp(id,aux->id) == 0 && compare_params(aux->tipo,param) == 0){
+            if((strcmp(id,aux->id) == 0 && compare_params(aux->tipo,param) == 0) || strcmp(id,"_") == 0){
                 return 0; //ignorar aquele metodo
             }
 

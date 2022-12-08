@@ -23,4 +23,5 @@ class errors {
     public static void factorial(int i, int i,int _) {
       i = i + i;
     }
+
 }
