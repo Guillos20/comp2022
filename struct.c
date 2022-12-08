@@ -639,12 +639,10 @@ void anotate_that_tree(Node *node)
                 }
             }
         }
-
         if (node->son != NULL)
         {
             anotate_that_tree(node->son);
         }
-
         if (node->sibling != NULL)
         {
             anotate_that_tree(node->sibling);
