@@ -30,7 +30,7 @@ class Call_Me_Maybe {
         // Nested calls
         f(f(f(f(f(f(0))))));
         f(f(true),f(0),f(0.0));
-        f(f(true),f(false),f(0.0));
+        f(f(true),f(false),f(1.0));
 
         // Print result
         System.out.print(f(f(f(f(f(f(0)))))));

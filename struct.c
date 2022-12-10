@@ -2,10 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include "struct.h"
+#include "symtab.h"
 // bash test.sh ./run para correr tudo estando os testes na pasta em questao, na meta 1 era meta1
 extern Table *symtab;
 char *func;
 char *class;
+extern int col_yacc;
+extern int linha;
+
 Node *createNode(char *token, char *value, Node *son, Node *sibling)
 {
     Node *n = (Node *)malloc(sizeof(Node));
@@ -14,6 +18,8 @@ Node *createNode(char *token, char *value, Node *son, Node *sibling)
     n->son = son;
     n->sibling = sibling;
     n->type = NULL;
+    n->column = col_yacc;
+    n->line = linha;
     return n;
 }
 
@@ -205,8 +211,9 @@ void print_anotated_tree(Node *node, int num)
 
 char *get_type_entry(char *id, Table *tab, char *func)
 {
-    int hasDone=0;
-    if(strcmp(func,class)==0){
+    int hasDone = 0;
+    if (strcmp(func, class) == 0)
+    {
         hasDone++;
     }
     if (func)
@@ -248,38 +255,100 @@ char *get_type_entry(char *id, Table *tab, char *func)
             tab_ent = tab_ent->next;
         }
     }
-    if(!hasDone){
-    get_type_entry(id, symtab, class);
-    }else{
-    return "undef";
+    if (!hasDone)
+    {
+        get_type_entry(id, symtab, class);
+    }
+    else
+    {
+        return "undef";
     }
 }
-type *get_type_func(char *id, Table *tab)
+type *get_type_func(char *id, Table *tab, type *t)
 {
+    // if (t)
+    // {
+    //     if (t->next)
+    //     {
+    //         printf("lelelelelelel\t %s  \n", t->next->tipo);
+    //     }
+    // }
     Table_ent *tab_ent = tab->entry;
+    type *auxType = malloc(sizeof(type));
     while (tab_ent)
     {
         // printf("%s\n", tab_ent->id);
         if (strcmp(tab_ent->id, id) == 0)
         {
+            // maybe add if
+            auxType = tab_ent->tipo;
+            // printf(" anibal\t%s\t%s\n",auxType->tipo,t->tipo);
+            if (compare_tree_params(auxType, t) == 1)
+            {
+                return tab_ent->tipo;
+            }
+            else
+            {
+                tab_ent = tab_ent->next;
+            }
+            // while(auxType){
+            //     if(strcmp(auxType->tipo, t->tipo)==0){
+
+            //     }
+            // }
             // printf("%s\n", tab_ent->tipo->tipo);
-            return tab_ent->tipo;
         }
         else
         {
             tab_ent = tab_ent->next;
         }
     }
+    return NULL;
 }
-char *get_ret_func(char *id, Table *tab)
+
+int compare_tree_params(type *params, type *p)
 {
+    // printf("lololololk\n");
+
+    if (params == NULL && p == NULL)
+    {
+        return 1; // sao iguais
+    }
+    if ((params == NULL && p != NULL) || (params != NULL && p == NULL))
+    {
+        return 0; // sao diferentes
+    }
+
+    type *aux_type1 = params;
+    type *aux_type2 = p;
+    // printf("okokkok\n");
+    while (aux_type1 && aux_type2)
+    {
+        if (strcmp(aux_type1->tipo, aux_type2->tipo) != 0)
+        {
+            return 0; // sao diferentes
+        }
+        if ((aux_type1->next == NULL && aux_type2->next != NULL) || (aux_type1->next != NULL && aux_type2->next == NULL))
+        {
+            return 0; // sao diferentes
+        }
+        aux_type1 = aux_type1->next;
+        aux_type2 = aux_type2->next;
+    }
+    return 1; // sao iguais
+}
+
+char *get_ret_func(char *id, Table *tab, type *tipo)
+{
+    type *auxType = malloc(sizeof(type));
+
     Table_ent *tab_ent = tab->entry;
     while (tab_ent)
     {
-        // printf("%s\n", tab_ent->id);
-        if (strcmp(tab_ent->id, id) == 0)
+        auxType = tab_ent->tipo;
+        // printf(" anibal\t%s\t%s\n",auxType->tipo,t->tipo);
+        if (compare_tree_params(auxType, tipo) == 1)
         {
-
             return tab_ent->ret;
         }
         else
@@ -287,6 +356,7 @@ char *get_ret_func(char *id, Table *tab)
             tab_ent = tab_ent->next;
         }
     }
+    return "undef";
 }
 void anotate_that_tree(Node *node)
 {
@@ -303,21 +373,39 @@ void anotate_that_tree(Node *node)
         }
         if (strcmp(node->token, "Assign") == 0)
         {
+            int leng =0;
             // need to add Lshift and Rshift in this func
             Node *son = node->son;
 
             if (strcmp(son->token, "Id") == 0)
             {
                 son->type = get_type_entry(son->value, symtab, func);
+                node->type = son->type;
             }
-            node->type = son->type;
+            else
+            {
+                anotate_that_tree(son);
+                node->type = son->type;
+
+            }
+
             if (strcmp(son->sibling->token, "Id") == 0)
             {
                 son->sibling->type = get_type_entry(son->sibling->value, symtab, func);
             }
             else
             {
-                anotate_that_tree(son);
+                anotate_that_tree(son->sibling);
+            }
+            if (strcmp(son->type, "double") == 0 && (strcmp(son->sibling->type, "double") == 0 || strcmp(son->sibling->type, "int") == 0))
+            {
+            }
+            else if (strcmp(son->type, son->sibling->type) != 0)
+            {
+                if(son->sibling->value){
+                    leng =strlen(son->sibling->value) + 2;
+                }
+                printf("Line %d, col %d: Operator = cannot be applied to types %s, %s\n", son->line, son->column - leng, son->type, son->sibling->type);
             }
         }
         if (strcmp(node->token, "Xor") == 0 || strcmp(node->token, "Or") == 0)
@@ -355,6 +443,19 @@ void anotate_that_tree(Node *node)
         }
         if (strcmp(node->token, "Add") == 0 || strcmp(node->token, "Sub") == 0 || strcmp(node->token, "Mul") == 0 || strcmp(node->token, "Div") == 0 || strcmp(node->token, "Mod") == 0)
         {
+            char *op = "";
+            if(strcmp(node->token, "Add") == 0){
+            op = "+";
+
+            }else if(strcmp(node->token, "Sub") == 0){
+            op = "-";
+
+            }else if(strcmp(node->token, "Mul") == 0){
+            op = "*";
+
+            }else if(strcmp(node->token, "Div") == 0){
+            op = "/";
+            }
             if (node->son)
             {
                 if (strcmp(node->son->token, "Id") == 0)
@@ -386,11 +487,15 @@ void anotate_that_tree(Node *node)
                     if (strcmp(node->son->type, "boolean") == 0 || strcmp(node->son->type, "String") == 0 || strcmp(node->son->sibling->type, "boolean") == 0 || strcmp(node->son->sibling->type, "String") == 0 || strcmp(node->son->type, "undef") == 0 || strcmp(node->son->sibling->type, "undef") == 0 || strcmp(node->son->type, "String[]") == 0 || strcmp(node->son->sibling->type, "String[]") == 0)
                     {
                         node->type = "undef";
+                        printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", node->line, node->column, op ,node->son->type, node->son->sibling->type);
+
                     }
                 }
                 else
                 {
                     node->type = "undef";
+                    //printf("Line %d, col %d: Operator %s cannot be applied to type %s\n", node->line, node->column, op ,node->son->type);
+
                 }
             }
         }
@@ -511,13 +616,66 @@ void anotate_that_tree(Node *node)
         }
         if (strcmp(node->token, "Call") == 0)
         {
+
             int num_of_params = 0;
             int num_of_sib = 0;
+            type *tipos_call = NULL;
+            type *aux_t = NULL;
+
+            if (node->son->sibling)
+            {
+                Node *params = malloc(sizeof(Node));
+                params = node->son->sibling;
+                while (params)
+                {
+                    num_of_sib++;
+                    if (strcmp(params->token, "Id") == 0)
+                    {
+                        params->type = get_type_entry(params->value, symtab, func);
+                    }
+                    else
+                    {
+                        // printf(" ioioioioo \t %s  \n", params->token);
+                        anotate_that_tree(params);
+                    }
+                    // printf("estou aqui    %s \n",params->type);
+                    if (tipos_call == NULL)
+                    {
+                        tipos_call = createType(params->type, NULL);
+                    }
+                    else
+                    {
+                        aux_t = tipos_call;
+                        while (aux_t->next != NULL)
+                        {
+                            aux_t = aux_t->next;
+                        }
+                        aux_t->next = createType(params->type, NULL);
+                    }
+                    params = params->sibling;
+                }
+
+                if (tipos_call)
+                {
+
+                    // printf("lelelelelelel\t %s  \n", tipos_call->tipo);
+                }
+            }
+
             char string[1999] = "";
             int correct = 0;
             type *str = malloc(sizeof(type));
-            str = get_type_func(node->son->value, symtab);
-            char *ret = get_ret_func(node->son->value, symtab);
+            // printf("KEBBAB1111  \t %s \n",node->son->value);
+            str = get_type_func(node->son->value, symtab, tipos_call);
+            if (str)
+            {
+                if (str->next)
+                {
+                    // printf("lelelelelelel\t %s  \n", str->next->tipo);
+                }
+            }
+            // printf("KEBBAB  \t %s \n",str->tipo);
+            char *ret = get_ret_func(node->son->value, symtab, tipos_call);
             type *aux2 = malloc(sizeof(type));
             aux2 = str;
             strcat(string, "(");
@@ -539,27 +697,6 @@ void anotate_that_tree(Node *node)
             }
             strcat(string, ")");
             // printf("yes\t%s\n", string);
-            if (node->son->sibling)
-            {
-                Node *params = malloc(sizeof(Node));
-                params = node->son->sibling;
-                while (params)
-                {
-                    num_of_sib++;
-                    if (strcmp(params->token, "Id") == 0)
-                    {
-                        params->type = get_type_entry(params->value, symtab, func);
-                    }
-                    else
-                    {
-                        anotate_that_tree(params);
-                    }
-                    params = params->sibling;
-                }
-            }
-            // printf("func:\t%s\tnum:%d\n", node->son->value, num_of_sib);
-            //  anotate_that_tree(node->son->sibling);
-            //  anotate_that_tree(node->son->sibling->sibling);
 
             Node *aux = malloc(sizeof(Node));
             aux = node->son->sibling;
@@ -568,11 +705,12 @@ void anotate_that_tree(Node *node)
             {
                 if (strcmp(str->tipo, "double") == 0)
                 {
-                    if (strcmp(str->tipo, "double") == 0 || strcmp(str->tipo, "int") == 0)
+                    if (strcmp(aux->type, "double") == 0 || strcmp(aux->type, "int") == 0)
                     {
                     }
                     else
                     {
+                        // printf("okoookokkkkdkkfkfkfk\t %s\t %s \n", str->tipo, aux->type);
                         correct += 1;
                     }
                 }
@@ -583,6 +721,7 @@ void anotate_that_tree(Node *node)
                 }
                 else
                 {
+                    // printf("hfhjdhggg\t%s\t %s \n", str->tipo, aux->type);
                     correct += 1;
                 }
                 // printf("Entrou:%s\t %s\t%s\n",node->son->value, aux->type, str->tipo);

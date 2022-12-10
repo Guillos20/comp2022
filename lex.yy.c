@@ -2540,8 +2540,9 @@ int main(int argc, char** argv){
             fc = 3;
             yyparse();
             initTable(root);
-            print_Table(symtab);
             anotate_that_tree(root);
+            
+            print_Table(symtab);
             print_anotated_tree(root, 0);
             
         }else{

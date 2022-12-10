@@ -8,6 +8,8 @@ typedef struct Node
     struct Node *son;
     struct Node *sibling;
     char * type;
+    int line;
+    int column;
 } Node;
 
 typedef struct Table//para identificar as tabelas
@@ -49,7 +51,9 @@ void print_tree(Node *node, int num);
 void print_anotated_tree(Node *node, int num);
 void anotate_that_tree(Node *node);
 char *get_type_entry(char *id, Table *tab, char *func);
-type *get_type_func(char *id, Table *tab);
+type *get_type_func(char *id, Table *tab, type *t);
+int compare_tree_params(type* params, type * p);
+
 
 Table *createTable(char* id, int typical, struct type *t, struct Table *next, struct Table_ent *entry);
 Table_ent *insertEntry(char *ret, struct type *t, char *id, int isParam , struct Table_ent *next);

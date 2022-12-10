@@ -12,6 +12,8 @@
     int yylex(void);
     extern void yyerror(char *s);
     int blockCount;
+    extern int col_yacc;
+    extern int linha;
 %}
 
 %union{
