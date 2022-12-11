@@ -115,48 +115,48 @@ Terminals, with rules where they appear
 
     $end (0) 0
     error (256) 8 41 46 51 79
-    ELSE (258) 31
-    DOTLENGTH (259) 74
-    DOUBLE (260) 13
-    AND (261) 56
-    ASSIGN (262) 49
-    STAR (263) 65
-    COMMA (264) 9 20 27 47
-    DIV (265) 66
-    EQ (266) 59
-    GE (267) 62
-    GT (268) 58
-    LBRACE (269) 1 22 29
-    LE (270) 61
-    LPAR (271) 14 15 16 17 30 31 32 39 40 44 45 46 50 51 76 79
-    LSQ (272) 19 50
-    LT (273) 57
-    MINUS (274) 64 69
-    MOD (275) 67
-    NE (276) 60
-    NOT (277) 68
-    OR (278) 52
-    PLUS (279) 63 70
-    RBRACE (280) 1 22 29
-    RPAR (281) 14 15 16 17 30 31 32 39 40 44 45 46 50 51 76 79
-    RSQ (282) 19 50
-    SEMICOLON (283) 4 7 8 26 33 34 35 36 37 38 39 40 41
-    ARROW (284)
-    LSHIFT (285) 54
-    RSHIFT (286) 55
-    XOR (287) 53
-    BOOL (288) 11
-    CLASS (289) 1
-    IF (290) 30 31
-    INT (291) 12
-    PRINT (292) 39 40
-    PARSEINT (293) 50 51
-    PUBLIC (294) 6 7
-    RETURN (295) 33 34
-    STATIC (296) 6 7
-    STRING (297) 19
-    VOID (298) 16 17
-    WHILE (299) 32
+    ELSE <col_yacc> (258) 31
+    DOTLENGTH <col_yacc> (259) 74
+    DOUBLE <col_yacc> (260) 13
+    AND <col_yacc> (261) 56
+    ASSIGN <col_yacc> (262) 49
+    STAR <col_yacc> (263) 65
+    COMMA <col_yacc> (264) 9 20 27 47
+    DIV <col_yacc> (265) 66
+    EQ <col_yacc> (266) 59
+    GE <col_yacc> (267) 62
+    GT <col_yacc> (268) 58
+    LBRACE <col_yacc> (269) 1 22 29
+    LE <col_yacc> (270) 61
+    LPAR <col_yacc> (271) 14 15 16 17 30 31 32 39 40 44 45 46 50 51 76 79
+    LSQ <col_yacc> (272) 19 50
+    LT <col_yacc> (273) 57
+    MINUS <col_yacc> (274) 64 69
+    MOD <col_yacc> (275) 67
+    NE <col_yacc> (276) 60
+    NOT <col_yacc> (277) 68
+    OR <col_yacc> (278) 52
+    PLUS <col_yacc> (279) 63 70
+    RBRACE <col_yacc> (280) 1 22 29
+    RPAR <col_yacc> (281) 14 15 16 17 30 31 32 39 40 44 45 46 50 51 76 79
+    RSQ <col_yacc> (282) 19 50
+    SEMICOLON <col_yacc> (283) 4 7 8 26 33 34 35 36 37 38 39 40 41
+    ARROW <col_yacc> (284)
+    LSHIFT <col_yacc> (285) 54
+    RSHIFT <col_yacc> (286) 55
+    XOR <col_yacc> (287) 53
+    BOOL <col_yacc> (288) 11
+    CLASS <col_yacc> (289) 1
+    IF <col_yacc> (290) 30 31
+    INT <col_yacc> (291) 12
+    PRINT <col_yacc> (292) 39 40
+    PARSEINT <col_yacc> (293) 50 51
+    PUBLIC <col_yacc> (294) 6 7
+    RETURN <col_yacc> (295) 33 34
+    STATIC <col_yacc> (296) 6 7
+    STRING <col_yacc> (297) 19
+    VOID <col_yacc> (298) 16 17
+    WHILE <col_yacc> (299) 32
     STRLIT <stringValue> (300) 40
     INTLIT <stringValue> (301) 71
     RESERVED <stringValue> (302)

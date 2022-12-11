@@ -12,17 +12,18 @@
     int yylex(void);
     extern void yyerror(char *s);
     int blockCount;
-    extern int col_yacc;
     extern int linha;
+    
 %}
 
 %union{
     char *stringValue;
     char *value;
+    int col_yacc;
     struct Node *node;
 }
 
-%token ELSE DOTLENGTH DOUBLE AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ SEMICOLON ARROW LSHIFT RSHIFT XOR BOOL CLASS IF INT  PRINT PARSEINT PUBLIC RETURN STATIC STRING VOID WHILE 
+%token <col_yacc> ELSE DOTLENGTH DOUBLE AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ SEMICOLON ARROW LSHIFT RSHIFT XOR BOOL CLASS IF INT  PRINT PARSEINT PUBLIC RETURN STATIC STRING VOID WHILE 
 %token <stringValue> STRLIT INTLIT RESERVED BOOLLIT ID REALLIT
 %type <node> Program DeclMult MethodDecl FieldDecl COMID Type MethodHeader FormalParams COMTYPID MethodBody BODY VarDecl COMIDVAR Statement StatementHelper MethodInvocation COMMAExpr Assignment ParseArgs Expr ExprHelper
 
@@ -152,7 +153,7 @@ Statement: LBRACE StatementHelper RBRACE                {Node * node = $2;blockC
                                                                    add_son($$, ifblock2);
                                                                 }
                                                         }
-    | WHILE LPAR ExprHelper RPAR Statement              {$$ = createNode("While",NULL, $3, NULL);
+    | WHILE LPAR ExprHelper RPAR Statement              {$$ = createNode2("While",NULL, $3, NULL,$2);
                                                             Node *whileblock=createNode("Block",NULL, NULL,NULL); 
                                                             if($5!=NULL){
                                                                 add_sibling($3,$5);
@@ -167,8 +168,8 @@ Statement: LBRACE StatementHelper RBRACE                {Node * node = $2;blockC
     | Assignment SEMICOLON                              {$$ = $1;}
     | ParseArgs SEMICOLON                               {$$ = $1;}
     | SEMICOLON                                   {$$ = NULL;}
-    | PRINT LPAR ExprHelper RPAR SEMICOLON              {$$ = createNode("Print",NULL,$3,NULL);}
-    | PRINT LPAR STRLIT RPAR SEMICOLON                  {$$ = createNode("Print",NULL,createNode("StrLit",$3,NULL,NULL),NULL);}
+    | PRINT LPAR ExprHelper RPAR SEMICOLON              {$$ = createNode2("Print",NULL,$3,NULL,$2);}
+    | PRINT LPAR STRLIT RPAR SEMICOLON                  {$$ = createNode2("Print",NULL,createNode("StrLit",$3,NULL,NULL),NULL,$2);}
     | error SEMICOLON                                   {$$ = NULL;}
     ;
 StatementHelper:Statement StatementHelper               {if($1 == NULL){$$ = $2;}
@@ -188,36 +189,36 @@ COMMAExpr: COMMA ExprHelper COMMAExpr                   {$$ = $2; add_sibling($2
 |                                                       {$$ = NULL;}
 ;
 
-Assignment: ID ASSIGN ExprHelper                        {$$ = createNode("Assign",NULL,createNode("Id",$1,NULL,$3),NULL);}
+Assignment: ID ASSIGN ExprHelper                        {$$ = createNode2("Assign",NULL,createNode("Id",$1,NULL,$3),NULL,$2);}
 ;
 
-ParseArgs:PARSEINT LPAR ID LSQ ExprHelper RSQ RPAR      {$$ = createNode("ParseArgs",NULL,createNode("Id",$3,NULL,$5),NULL);}
+ParseArgs:PARSEINT LPAR ID LSQ ExprHelper RSQ RPAR      {$$ = createNode2("ParseArgs",NULL,createNode("Id",$3,NULL,$5),NULL,$1);}
     |PARSEINT LPAR error RPAR                           {$$ = NULL;}
     ;
 
-Expr:Expr OR Expr                                 {$$ = createNode("Or",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr XOR Expr                                {$$ = createNode("Xor",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr LSHIFT Expr                             {$$ = createNode("Lshift",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr RSHIFT Expr                             {$$ = createNode("Rshift",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr AND Expr                                {$$ = createNode("And",NULL,$1,NULL);add_sibling($1,$3);} 
-    |Expr LT Expr                                 {$$ = createNode("Lt",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr GT Expr                                 {$$ = createNode("Gt",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr EQ Expr                                 {$$ = createNode("Eq",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr NE Expr                                 {$$ = createNode("Ne",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr LE Expr                                 {$$ = createNode("Le",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr GE Expr                                 {$$ = createNode("Ge",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr PLUS Expr                               {$$ = createNode("Add",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr MINUS Expr                              {$$ = createNode("Sub",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr STAR Expr                               {$$ = createNode("Mul",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr DIV Expr                                {$$ = createNode("Div",NULL,$1,NULL);add_sibling($1,$3);}
-    |Expr MOD Expr                                {$$ = createNode("Mod",NULL,$1,NULL);add_sibling($1,$3);}
-    |NOT Expr              %prec UNARY            {$$ = createNode("Not",NULL,$2,NULL);}
-    |MINUS Expr            %prec UNARY            {$$ = createNode("Minus",NULL,$2,NULL);}
-    |PLUS Expr             %prec UNARY            {$$ = createNode("Plus",NULL,$2,NULL);}
+Expr:Expr OR Expr                                 {$$ = createNode2("Or",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr XOR Expr                                {$$ = createNode2("Xor",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr LSHIFT Expr                             {$$ = createNode2("Lshift",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr RSHIFT Expr                             {$$ = createNode2("Rshift",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr AND Expr                                {$$ = createNode2("And",NULL,$1,NULL,$2);add_sibling($1,$3);} 
+    |Expr LT Expr                                 {$$ = createNode2("Lt",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr GT Expr                                 {$$ = createNode2("Gt",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr EQ Expr                                 {$$ = createNode2("Eq",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr NE Expr                                 {$$ = createNode2("Ne",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr LE Expr                                 {$$ = createNode2("Le",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr GE Expr                                 {$$ = createNode2("Ge",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr PLUS Expr                               {$$ = createNode2("Add",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr MINUS Expr                              {$$ = createNode2("Sub",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr STAR Expr                               {$$ = createNode2("Mul",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr DIV Expr                                {$$ = createNode2("Div",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |Expr MOD Expr                                {$$ = createNode2("Mod",NULL,$1,NULL,$2);add_sibling($1,$3);}
+    |NOT Expr              %prec UNARY            {$$ = createNode2("Not",NULL,$2,NULL, $1);}
+    |MINUS Expr            %prec UNARY            {$$ = createNode2("Minus",NULL,$2,NULL,$1);}
+    |PLUS Expr             %prec UNARY            {$$ = createNode2("Plus",NULL,$2,NULL,$1);}
     |INTLIT                                       {$$ = createNode("DecLit",$1,NULL,NULL);}
     |REALLIT                                      {$$ = createNode("RealLit",$1,NULL,NULL);}
     |ID                                           {$$ = createNode("Id",$1, NULL,NULL);}
-    |ID DOTLENGTH                                 {$$ = createNode("Length",NULL,createNode("Id",$1,NULL,NULL),NULL);}
+    |ID DOTLENGTH                                 {$$ = createNode2("Length",NULL,createNode("Id",$1,NULL,NULL),NULL,$2);}
     |BOOLLIT                                      {$$ = createNode("BoolLit",$1,NULL,NULL);}
     |LPAR ExprHelper RPAR                         {$$ = $2;}
     |MethodInvocation                             {$$ = $1;}

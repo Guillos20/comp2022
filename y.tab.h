@@ -159,9 +159,10 @@ union YYSTYPE
 
     char *stringValue;
     char *value;
+    int col_yacc;
     struct Node *node;
 
-#line 165 "y.tab.h"
+#line 166 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

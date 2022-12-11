@@ -37,11 +37,25 @@ typedef struct type
     struct type *next;
 
 }type;
+typedef struct erro
+{
+    char * error_message;
+    struct erro *next;
+}erro;
+
 
 typedef enum {integer, string, doub, boolean, undef} basic_type;
 
 Node *root;
 Node *createNode(char *token, char *value, Node *son, Node *sibling);
+
+
+Node *createNode2(char *token, char *value, Node *son, Node *sibling, int col);
+
+
+
+
+
 Node *add_sibling(Node * someone, Node * sibling);
 Node *add_son(Node * parent, Node * son);
 void save_type(Node *first, Node *type);
