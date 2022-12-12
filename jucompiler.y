@@ -18,7 +18,6 @@
 
 %union{
     char *stringValue;
-    char *value;
     int col_yacc;
     struct Node *node;
 }

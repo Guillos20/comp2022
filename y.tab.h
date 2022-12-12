@@ -158,11 +158,10 @@ union YYSTYPE
 #line 19 "jucompiler.y"
 
     char *stringValue;
-    char *value;
     int col_yacc;
     struct Node *node;
 
-#line 166 "y.tab.h"
+#line 165 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

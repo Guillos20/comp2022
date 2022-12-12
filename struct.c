@@ -59,10 +59,6 @@ Table_ent *insertEntry(char *ret, struct type *t, char *id, int isParam, struct 
     ent->id = id;
     ent->isParam = isParam;
     ent->next = next;
-    // for (int i = 0; i < sizeof(*type); i++)
-    // {
-    //     //ent->typ[i] = type[i];
-    // }
     ent->tipo = t;
     return ent;
 }
@@ -519,7 +515,7 @@ char *get_ret_func(char *id, Table *tab, type *tipo)
     }
     else
     {
-        //printf("entrei neste welelel \n");
+        // printf("entrei neste welelel \n");
         return "undef";
     }
 }
@@ -608,7 +604,6 @@ void anotate_that_tree(Node *node)
             {
                 node->type = "boolean";
             }
-            
         }
         if (strcmp(node->token, "Add") == 0 || strcmp(node->token, "Sub") == 0 || strcmp(node->token, "Mul") == 0 || strcmp(node->token, "Div") == 0 || strcmp(node->token, "Mod") == 0)
         {
@@ -778,10 +773,10 @@ void anotate_that_tree(Node *node)
                 {
                     anotate_that_tree(aux);
                 }
-                
 
                 aux = aux->sibling;
             }
+
             // Node *aux2 = malloc(sizeof(Node));
             // aux2 = node->son;
             // while(aux2){
@@ -819,7 +814,6 @@ void anotate_that_tree(Node *node)
                 // }
                 aux = aux->sibling;
             }
-            
         }
         if (strcmp(node->token, "If") == 0 || strcmp(node->token, "While") == 0)
         {
@@ -900,7 +894,7 @@ void anotate_that_tree(Node *node)
 
                 if (tipos_call)
                 {
-                    
+
                     // printf("lelelelelelel\t %s  \n", tipos_call->tipo);
                 }
             }
@@ -945,7 +939,6 @@ void anotate_that_tree(Node *node)
                 strcat(string, aux2->tipo);
             }
             strcat(string, ")");
-            
 
             if (str == NULL)
             {
